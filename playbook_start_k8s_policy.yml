@@ -1,0 +1,60 @@
+# Example Playbok to Add Kubernetes Cluster to PPDM
+- name: Add K8S to PPDM
+  hosts: localhost
+  connection: local
+  vars:  
+    k8s_policy_name: K8S_Protection 3hrs 3days
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have a ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Checking Required Variable ddve_fqdn
+    fail: 
+      msg: "We do not have ddve_fqdn  set !"
+    when: (ddve_fqdn is not defined) or (ddve_fqdn|length == 0)  
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get Protection Policy
+    include_role: 
+      name: get_ppdm_protection_policy
+    vars:
+      filter: assetType eq "KUBERNETES" & name eq "{{ k8s_policy_name }}" 
+
+
+
+  - name: Run Protection Policy
+    vars:
+      policy_id: "{{ protection_policy.id }}"
+      backup:
+        assetIds:
+        stages:
+        - id: "{{ protection_policy.stages[0].id }}"
+          retention: 
+            interval: 3
+            unit: DAY
+          operation: 
+            backupType: FULL
+    include_role:
+      name: run_ppdm_protection_policy
+    when: protection_policy.id is defined
+  - debug: 
+      msg: "{{ protection_policy_run }}"
+      verbosity: 0   
+

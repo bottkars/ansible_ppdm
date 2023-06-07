@@ -1,0 +1,108 @@
+# Example Playbook to configure Server Disaster Recovery, using an existing Boost StorageUnit
+# a local credentila will be created for the SU, assuming buts user exists
+- name: Set PPDM SDR
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ddve_repository_path set !"
+    when: (ddve_repository_path is not defined) or (ddve_repository_path|length <= 5)  
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"     
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get SDR Configuration Template
+    include_role: 
+      name: get_ppdm_sdr_configuration
+  - debug: 
+      msg: "{{ sdr_configuration }}"
+      verbosity: 1 
+    name: show me your config 
+  - name: Get DataDomain Inventory Sources
+    include_role: 
+      name: get_ppdm_storage-systems
+    vars:
+      filter: type eq "DATA_DOMAIN_SYSTEM" & orderby = name ASC & name eq "{{ ddve_fqdn }}" 
+  - name: Extract SDR Config ID
+    set_fact: 
+      sdr_configuration_id: "{{ item.value }}"
+    with_items: 
+        - "{{ sdr_configuration.properties }}"
+    when: item.name == 'configId'
+  - name: Extract SDR Repository ID for existing Repository
+    set_fact: 
+      ddve_repository_path: "{{ item.value }}"
+    with_items: 
+        - "{{ sdr_configuration.properties }}"
+    when: item.name == 'repositoryPath'
+
+  - name: Extract Credential ID for existing Repository
+    set_fact: 
+      credentials:
+        id: "{{ item.value }}"
+    with_items: 
+        - "{{ sdr_configuration.properties }}"
+    when: item.name == 'credentialId'
+
+
+  - name: generating shortname for {{ ddve_fqdn }}
+    set_fact:
+      sysdr: "{{ (ppdm_fqdn | urlsplit('hostname')).split('.')[0] }}" 
+  - name: Define credentialUsername 
+    set_fact: 
+      credentialUsername: "SysDR_{{ sysdr }}"
+                
+
+#  - name: get existing DDBoost User for SDR
+#    vars:
+#      filter: type eq "DATADOMAIN" and name eq "{{ credentialUsername }}""
+#    include_role:
+#      name: get_ppdm_credentials
+
+
+#  - name: select 1st credential
+#    set_fact:
+#      credentials: "{{ credentials[0] }}"
+#    when: credentials[0].id  | default('', true) | trim != ''  
+#  - debug:
+#      msg: "{{ credentials }}"     
+#      verbosity: 0     
+#  - name: create DDBoots User for SDR
+#    vars:
+#      data: 
+#        type: "DATADOMAIN"
+#        name: "{{ credentialUsername }}"
+#        method: "TOKEN"
+#        username: "{{ credentialUsername }}"
+#        password: "{{ ppdm_new_password }}"
+#    include_role:
+#      name: create_ppdm_credentials
+#    when: credentials.id  | default('', false) | trim == ''
+
+  - name: Set SDR Configuration
+    include_role: 
+      name: set_ppdm_sdr_configuration
+    vars:
+      data:
+        backupsEnabled: true
+        id: "{{ sdr_configuration_id }}"
+        repositoryHost: "{{ storagesystems[0].id }}"
+        credentialId: "{{ credentials.id }}"
+        repositoryFilesystem: "BOOST_FILE_SYSTEM"
+        repositoryPath: "SysDR_{{ sysdr }}"
+#        credentialUsername: "credentialUsername"
+#        credentialPassword: "{{ ppdm_new_password }}"
+        type: "DATA_DOMAIN_SYSTEM"
+        credentialType: "DDBOOST"        
+       

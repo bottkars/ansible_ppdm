@@ -1,0 +1,53 @@
+# Example Playbok to Add DDVE to PPDM
+- name: Add DDVE to PPDM
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: GET CRA Component ID
+    include_role:
+      name: get_ppdm_components
+  - debug:
+      msg: "{{ components.content  | json_query(jmesquery) }}"
+    vars:
+      jmesquery: "[? componentServiceName=='cdr']"
+      verbosity: 0 
+
+  - name: Get Cloud DR Account 
+    include_role:
+      name: get_clouddr_account
+  - name: Set Clouddr Data Target
+    include_role:
+      name: set_clouddr_data_target  
+    vars:
+      jmesquery: "[? providerName=='AZURE'].id | [0]"
+      id: "{{ clouddr_accounts  | json_query(jmesquery) }}"
+      body: 
+        name: "{{ storageaccount }}"
+        encryptionMethod: null
+        copiesStorageContainer:
+          id: "{{ storageaccount }}"
+     
+  
+     

@@ -1,0 +1,41 @@
+- name: test Credentials 
+  vars:
+    filter: name eq "{{ data.name }}" and type eq "{{ data.type }}"
+  include_role:
+    name: get_ppdm_credentials
+- set_fact:
+    credentials: "{{ credentials[0] | default([]) | combine(data, recursive=True) }}"
+  when: credentials[0].id is defined 
+
+- name: Update PPDM credentials {{ credentials.name }}
+  vars:
+    data:  "{{ credentials }}"
+    id: "{{ credentials.id }}"
+  include_role:
+    name: set_ppdm_credentials
+  when: credentials is defined   
+
+
+- name: Create New PPDM Credentials
+  uri:
+    method: POST
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/credentials"
+    body_format: json
+    body: "{{ data }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,201,202,503
+    validate_certs: false
+  register: result  
+  retries: 10
+  delay: 30
+  until: result.status == 201 or result.status == 200
+  when: not ansible_check_mode and credentials.id is not defined
+- set_fact:
+    credentials: "{{ result.json }}"
+  when: credentials.id is not defined   
+- debug:
+    msg: "{{ credentials }}"
+    verbosity: 1
+  when: credentials is defined   

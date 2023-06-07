@@ -1,0 +1,66 @@
+- name: Create Root User
+  set_fact: 
+    root_user: "{{ item | default([]) | combine({'newPassword': one_password, 'password':'changeme'}, recursive=True) }}"
+  with_items: 
+      - "{{ new_config.osUsers }}"
+  when: item.userName == 'root'
+
+- name: Create admin User
+  set_fact: 
+    admin_user: "{{ item | default([]) | combine({'newPassword': one_password, 'password':'@ppAdm1n'}, recursive=True) }}"
+  with_items: 
+      - "{{ new_config.osUsers }}"
+  when: item.userName == 'admin'
+
+- name: Create support User
+  set_fact: 
+    support_user: "{{ item | default([]) | combine({'newPassword': one_password, 'password':'$upp0rt!'}, recursive=True) }}"
+  with_items: 
+      - "{{ new_config.osUsers }}"
+  when: item.userName == 'support'           
+- debug:
+    msg:
+    - "{{ root_user }}"
+    - "{{ admin_user }}"
+    - "{{ support_user }}"
+    verbosity: 1
+  
+- name: merge new setup
+  vars:
+    my_new_config:
+      osUsers:
+        - "{{ root_user }}"
+        - "{{ admin_user }}"
+        - "{{ support_user }}"
+      ntpServers: "{{ ntpServers }}"
+      timeZone: "{{ timeZone }}"
+      gettingStartedCompleted: true
+      lockbox:
+        passphrase: "Ch@ngeme1"
+        newPassphrase: "{{ one_password }}"
+      applicationUserPassword: "{{ one_password }}"   
+ 
+  set_fact:
+    new_config: "{{ new_config | default([]) | combine(my_new_config, recursive=True) }}"
+
+- debug:    
+    msg: "{{ new_config }}"
+    verbosity: 1
+
+- name: Set PPDM Configuration
+  vars: 
+    configuration_id: "{{ new_config.id }}"
+  uri:
+    method: PUT
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/configurations/{{ configuration_id }}"
+    body_format: json
+    body: "{{ new_config }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 202 ,403
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+- set_fact:
+    configuration: "{{ result.json }}"

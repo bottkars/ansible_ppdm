@@ -1,0 +1,25 @@
+- name: Define uri with vib-details ID
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/vib-details?parentResourceId={{ id }}"
+#  when: id  | default('', true) | trim != ''
+
+- name: Get PPDM vib-details with status {{ condition }}
+  uri:
+    method: GET
+    url: "{{ uri }}"
+    body_format: json 
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,500
+    validate_certs: false
+  register: result
+  until: "{{ condition }}"    
+  retries: "{{ retries }}"
+  delay: "{{ delay }}"
+  when: not ansible_check_mode 
+- set_fact:
+    vibdetails: "{{ result.json.content }}"
+- debug:
+    msg: "{{ vibdetails }}"
+    verbosity: 0    

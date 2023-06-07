@@ -1,0 +1,47 @@
+
+- name: Get PPDM inventory-sources 
+  include_role: 
+    name: get_ppdm_inventory-sources
+  vars:
+    filter: address eq "{{ data.address }}" & type eq "{{ data.type }}"
+#- set_fact: 
+#    inventory: "{{ inventorysources[0] }}"
+#  when: inventorysources[0].id is defined
+- set_fact:
+    inventory: "{{ inventorysources[0] | default([]) | combine(data, recursive=True) }}"
+  when: inventorysources[0].id is defined
+
+- name: Update PPDM Inventory for {{ inventory.name }}
+  vars:
+    data:  "{{ inventory }}"
+    id: "{{ inventory.id }}"
+  include_role:
+    name: set_ppdm_inventory
+  when: inventory is defined   
+- debug:
+    msg: "{{ inventory }}"
+    verbosity: 0
+  when: inventory is defined  
+
+- name: Add PPDM Inventory
+  uri:
+    method: POST
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/inventory-sources"
+    body_format: json
+    body: "{{ data }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: -1,200,201,202,403,400,500,503,501
+    validate_certs: false
+    timeout: 60
+  register: result 
+  retries: "{{ retries }}"
+  delay: "{{ delay }}"
+  until: result.status <= 300 
+  when: not ansible_check_mode and inventory.id is not defined
+- set_fact:
+#    inventory: "{{ result.json }}"
+    inventory: "{% set copy=result.json.copy() %}{% set removed=copy.pop('_links') %}{{ copy }}"
+  when: inventory.id is not defined
+

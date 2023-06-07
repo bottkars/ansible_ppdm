@@ -1,0 +1,29 @@
+- name: Merge Host Certifiacate
+  vars:
+    my_new_certificate:
+      state: "ACCEPTED"
+  set_fact:
+    new_certificate: "{{ old_certificate | default([]) | combine(my_new_certificate, recursive=True) }}"
+- debug:
+    msg: "{{ new_certificate }}"
+    verbosity: 1
+- name: Accept Host Certificate
+  vars:
+    certificate_id: "{{ new_certificate.id }}" 
+  uri:
+    method: PUT
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/certificates/{{ certificate_id }}"
+    body_format: json
+    body: "{{ new_certificate }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,202,403
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+- set_fact:
+    certificate: "{{ result.json }}"
+- debug:
+    msg: "{{ certificate }}"
+    verbosity: 1

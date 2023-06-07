@@ -1,0 +1,31 @@
+- name: Define uri with inventory-sources ID
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/inventory-sources/{{ id }}"
+  when: id  | default('', true) | trim != ''
+- name: Define uri without inventory-sources id
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/inventory-sources"
+  when: id  | default('', false) | trim == ''
+- name: Rewrite uri with filter
+  set_fact: 
+    uri: "{{ uri }}?filter={{ filter | urlencode }}"  
+- name: Get PPDM inventory-sources with status {{ condition }}
+  uri:
+    method: GET
+    url: "{{ uri }}"
+    body_format: json 
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,500
+    validate_certs: false
+  register: result
+  until: condition   
+  retries: "{{ retries }}"
+  delay: "{{ delay }}"
+  when: not ansible_check_mode 
+- set_fact:
+    inventorysources: "{{ result.json.content }}"
+- debug:
+    msg: "{{ inventorysources }}"
+    verbosity: 1    

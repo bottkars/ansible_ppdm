@@ -1,0 +1,36 @@
+# Example Playbook to configure PPDM Certificates
+- name: Set PPDM vib-details
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+#  - name: Checking Required Variables - licenseKey
+#    fail: 
+#      msg: "We do not have licenseKey !"
+#    when: (licenseKey is not defined) or (licenseKey|length <= 5)  
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"     
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get PPDM inventory-sources
+    include_role: 
+      name: get_ppdm_inventory-sources
+    vars:
+      filter: type eq "VCENTER" & orderby = name ASC & name eq "vcsa1.home.labbuildr.com"
+ 
+  - name: Get PPDM vib-details
+    include_role: 
+      name: get_ppdm_vibs
+    vars:
+      # id: b704722c-d915-46ce-a6ec-3099919536f8:domain-c7
+      id: b704722c-d915-46ce-a6ec-3099919536f8 #:datacenter-2
+ 

@@ -1,0 +1,18 @@
+- name: Set PPDM SDR Configuraion
+  uri:
+    method: PUT
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/server-disaster-recovery-configurations/{{ data.id }}"
+    body_format: json
+    body: "{{ data }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+- set_fact:
+    sdr_config: "{{ result.json }}"
+- debug:
+    msg: "{{ sdr_config }}"
+    verbosity: 0

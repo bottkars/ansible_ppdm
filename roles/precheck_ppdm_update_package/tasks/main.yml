@@ -1,0 +1,41 @@
+# Precheck PPDM Update Task
+- name: precheck PPDM Update Package
+  uri:
+    method: POST
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/upgrade-packages/{{ id }}/precheck"
+    body_format: json
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 202,204,401,403,404,409,500
+    validate_certs: false
+  register: result  
+  retries: 10
+  delay: 30
+  until: result.json.state is defined and result.json.state == "PROCESSING"
+  when: not ansible_check_mode  
+- set_fact:
+    update_precheck: "{{ result.json }}"
+- debug:
+    msg: "{{ update_precheck }}"
+    verbosity: 1
+- name: Wait  Upgrade Package State
+  uri:
+    method: GET
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/upgrade-packages/{{ id }}"
+    body_format: json
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,202,403
+    validate_certs: false
+  register: result 
+  retries: 20 
+  delay:  30
+  when: not ansible_check_mode 
+  until: result.json.validationDetails is defined and result.json.state == "AVAILABLE"
+- set_fact:
+    validation_details: "{{ result.json.validationDetails }}"   
+- debug:
+    msg: "{{ validation_details }}"
+    verbosity: 1    

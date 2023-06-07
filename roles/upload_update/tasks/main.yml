@@ -1,0 +1,25 @@
+- name: Upload Upgrade File, this may take a while
+  uri:
+    method: POST
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/upgrade-packages"
+    body_format: form-multipart
+    body: 
+      file:
+        filename: "{{ upload_file }}"
+#      mime_type: application/octet-stream  
+#    src: "{{ upload_file }}"  
+    headers:
+      Content-Type: multipart/form-data
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,202,403
+    validate_certs: false
+    mode: 01777
+    force: yes
+    timeout: 60
+  register: result  
+  when: not ansible_check_mode 
+- set_fact:
+    upload_result: "{{ result.json }}"
+- debug:
+    msg: "{{ upload_result }}"
+    verbosity: 0

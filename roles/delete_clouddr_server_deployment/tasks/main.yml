@@ -1,0 +1,22 @@
+- name: Delete CloudDR Server Deployment
+  uri:
+    method: DELETE
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/cloud-dr-server-deployment"
+    body_format: json
+    body:
+      region: germanywestcentral
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,201,202,503,400
+    validate_certs: false
+  register: result  
+#  retries: "10"
+#  delay: "30"
+#  until: result.status == 201 or result.status == 200
+  when: not ansible_check_mode   
+- set_fact:
+    clouddr_server_deployment: "{{ result.json }}"
+- debug:
+    msg: "{{ clouddr_server_deployment }}"     
+    verbosity: 0   

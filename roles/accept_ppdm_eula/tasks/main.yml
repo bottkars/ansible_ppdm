@@ -1,0 +1,18 @@
+- name: Accept PPDM EULA
+  uri:
+    method: PATCH
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/eulas/PPDM"
+    body:
+      accepted: true
+    body_format: json 
+    status_code: 200,500
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"       
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+- debug:
+    msg: "{{ result.json }}"
+    verbosity: 1
+

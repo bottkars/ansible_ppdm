@@ -1,0 +1,87 @@
+# Example Playbok to Add Kubernetes Cluster to PPDM
+- name: Add K8S to PPDM
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have a ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have K8S fqdn set !"
+    when: (k8s_fqdn is not defined) or (k8s_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have k8s_token  set !"
+    when: (k8s_token is not defined) or (k8s_token|length == 0)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have k8s_port  set !"
+    when: (k8s_port is not defined) or (k8s_token|length <= 2)                     
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get Kubernetes Host Certificate for {{ k8s_fqdn }}
+    include_role:
+      name: get_ppdm_host_certificate  
+    vars: 
+      host: "{{ k8s_fqdn }}"
+      port: "{{ k8s_port }}"
+  - name: Accept K8S Host Certificate
+    include_role:
+      name: accept_ppdm_host_certificate  
+    vars: 
+      old_certificate: "{{ certificate }}"  
+  - name: Create K8S Credentials
+    vars:
+      data:
+        method: "TOKEN" 
+        name: "ppdm-admin"
+        type: "KUBERNETES"        
+        password: "{{ k8s_token }}"
+    include_role:
+      name: create_ppdm_credentials
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?          
+  - name: Add K8S Cluster to Inventory
+    vars:
+      data:
+        name: "{{ k8s_name }}"
+        type: "KUBERNETES"
+        address: "{{ k8s_fqdn }}"
+        port: "{{ k8s_port }}"
+        retries: 10
+        delay: 30
+        credentials: 
+            id: "{{ credentials.id }}"
+    include_role:
+      name: add_ppdm_inventory
+  - debug: 
+      msg: "{{ inventory }}"
+      verbosity: 0     
+
+
+    

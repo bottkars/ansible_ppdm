@@ -1,0 +1,35 @@
+# Example Playbook to configure PPDM Certificates
+- name: Set PPDM Certificates
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Checking Required Variables - privateKey
+    fail: 
+      msg: "We do not have privateKey !"
+    when: (privateKey is not defined) or (privateKey|length <= 5)  
+
+  - name: Checking Required Variables - certificateChain
+    fail: 
+      msg: "We do not have certificateChain !"
+    when: (certificateChain is not defined) or (certificateChain|length <= 5)  
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"     
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+
+  - name: Set PPDM Certificates
+    include_role: 
+      name: set_ppdm_certificates
+    vars:
+      newprivateKey: "{{ privateKey }}"
+      newcertificateChain: "{{ certificateChain }}"  

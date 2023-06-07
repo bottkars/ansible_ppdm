@@ -1,0 +1,62 @@
+# Example Playbook to configure Server Desaster Recovery
+- name: Set PPDM smtp
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_smtp_mailServer set !"
+    when: (ppdm_smtp_mailServer is not defined) or (ppdm_smtp_mailServer|length <= 5)  
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_smtp_mailFrom set !"
+    when: (ppdm_smtp_mailFrom is not defined) or (ppdm_smtp_mailFrom|length <= 5) 
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_smtp_port set !"
+    when: (ppdm_smtp_port is not defined) or (ppdm_smtp_port|length <= 1)           
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"     
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get SMTP Configuration 
+    include_role: 
+      name: get_ppdm_smtp_configuration
+  - debug: 
+      msg: "{{ smtp_configuration }}"
+      verbosity: 1 
+    name: show me your config 
+
+     
+  - name: Set smtp Configuration
+    include_role: 
+      name: set_ppdm_smtp_configuration
+    vars:
+      data:
+        mailServer: "{{ ppdm_smtp_mailServer }}"
+        port: "{{ ppdm_smtp_port }}"
+        mailFrom: "{{ ppdm_smtp_mailFrom }}"
+    when: smtp_configuration[0].id is not defined 
+
+  - name: update smtp Configuration
+    include_role: 
+      name: update_ppdm_smtp_configuration
+    vars:
+      id: "{{ smtp_configuration[0].id }}"
+      data:
+        id: "{{ smtp_configuration[0].id }}"
+        mailServer: "{{ ppdm_smtp_mailServer }}"
+        port: "{{ ppdm_smtp_port }}"
+        mailFrom: "{{ ppdm_smtp_mailFrom }}"
+    when: smtp_configuration[0].id is defined 
+                

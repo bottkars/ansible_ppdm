@@ -1,0 +1,91 @@
+# Example Playbok to Add vCenter to PPDM
+- name: Add vCenter to PPDM
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have vcenter fqdn set !"
+    when: (vcenter_fqdn is not defined) or (vcenter_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have vcenter_password  set !"
+    when: (vcenter_password is not defined) or (vcenter_password|length == 0)          
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get vcenter Host Certificate for  {{ vcenter_fqdn }}
+    include_role:
+      name: get_ppdm_host_certificate
+    vars: 
+      host: "{{ vcenter_fqdn }}"
+      port: "443"
+  - name: Accept VCenter Host Certificate for {{ vcenter_fqdn }}
+    include_role:
+      name: accept_ppdm_host_certificate  
+    vars: 
+      old_certificate: "{{ certificate }}" 
+
+  - name: Get vCenter Credentials from PPDM
+    vars:
+      filter: name eq "{{ vcenter_username }}" and type eq "VCENTER"
+    include_role:
+      name: get_ppdm_credentials
+  - set_fact:
+     credentials: "{{ credentials[0] }}"
+    when: credentials[0].id is defined       
+
+
+  - name: Create vCenter Credentials
+    vars:
+      data: 
+        type: "VCENTER"
+        name: "{{ vcenter_username }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+    include_role:
+      name: create_ppdm_credentials
+    when: credentials.id is not defined
+         
+  - name: Get vCenter Inventory Sources
+    include_role: 
+      name: get_ppdm_inventory-sources
+    vars:
+      filter: type eq "VCENTER" & orderby = name ASC & name eq "{{ vcenter_fqdn }}"     
+
+  - name: Add VCENTER {{ vcenter_fqdn }} to Inventory
+    vars:
+      data:
+        name: "{{ vcenter_fqdn }}"
+        type: "VCENTER"
+        address: "{{ vcenter_fqdn }}"
+        port: "443"
+        retries: 20
+        delay: 60
+        credentials: 
+            id: "{{ credentials.id }}"
+    include_role:
+      name: add_ppdm_inventory
+    when: inventorysources[0].id is not defined
+
+
+     

@@ -1,0 +1,21 @@
+- name: install PPDM Update Package
+  uri:
+    method: PUT
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/upgrade-packages/{{ id }}?forceUpgrade=true"
+    body_format: json
+    body: "{{ body }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 202,204,401,403,404,409,500
+    validate_certs: false
+  register: result  
+#  retries: "10"
+#  delay: "30"
+#  until: result.status == 201 or result.status == 200
+  when: not ansible_check_mode  
+- set_fact:
+    update: "{{ result.json }}"
+- debug:
+    msg: "{{ update }}"
+    verbosity: 0

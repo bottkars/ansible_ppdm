@@ -1,0 +1,21 @@
+- name: Update PPDM CloudDR Account
+  uri:
+    method: PUT
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/cloud-dr-accounts/{{ account_id }}"
+    body_format: json
+    body: "{{ data }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: "{{ status_codes }}"
+    validate_certs: false
+  register: result  
+#  retries: "10"
+#  delay: "30"
+#  until: result.status == 201 or result.status == 200
+  when: not ansible_check_mode   
+- set_fact:
+    credentials: "{{ result.json }}"
+- debug:
+    msg: "{{ credentials }}" 
+    verbosity: 0   

@@ -1,0 +1,22 @@
+- name: Define uri with SMTP ID
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/smtp/{{ id }}"
+  when: id  | default('', true) | trim != ''
+- name: Define uri without SMTP id
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/smtp"
+  when: id  | default('', false) | trim == ''
+- name: Get PPDM SMTP Configuration
+  uri:
+    method: GET
+    url: "{{ uri }}"
+    body_format: json 
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,500
+    validate_certs: false
+  register: result
+  when: not ansible_check_mode 
+- set_fact:
+    smtp_configuration: "{{ result.json.content }}"

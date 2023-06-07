@@ -1,0 +1,69 @@
+# Example Playbook to configure PPDM Certificates
+- name: Set PPDM K8S Controller
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+#  - name: Checking Required Variables - licenseKey
+#    fail: 
+#      msg: "We do not have licenseKey !"
+#    when: (licenseKey is not defined) or (licenseKey|length <= 5)  
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"     
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get PPDM inventory-sources
+    include_role: 
+      name: get_ppdm_inventory-sources
+    vars:
+      filter: address eq "api.ocs1.home.labbuildr.com" & type eq "KUBERNETES" 
+  - name: creating configurations
+    set_fact:
+## prior 19.7, we published _links ....      new_config: "{% set copy=configuration.content[0].copy() %}{% set removed=copy.pop('_links') %}{{ copy }}"
+     new_inventorysources: "{% set copy=inventorysources[0].copy() %}{% set removed=copy.pop('_links') %}{{ copy }}"
+#    name: Generating K8S Configuration
+     new_config: "{{ inventorysources[0] | json_query('details.k8s.configurations[?key!=`k8s.velero.exclude.resources`]') }}"
+  - debug:
+      msg: "{{ new_config }}"
+      verbosity: 0   
+  - name: creating configurations
+    vars:
+      old_config:
+        configurations: "{{ new_config }}"
+      my_new_config:
+        configurations:
+        - key: k8s.velero.exclude.resources
+          type: CONTROLLER_CONFIG
+          value: secrets, operators.operator.openshift.io, cloudcredentials.operator.openshift.io, clusteroperators.config.openshift.io, rolebindings,events, events.events.k8s.io,customresourcedefinitions.apiextensions.k8s.io, build.openshift.io, prometheusrules.monitoring.coreos.com
+    set_fact:
+      new_config: "{{ old_config | default([]) | combine(my_new_config, list_merge='append',recursive=True, ) }}"
+  - debug:
+      msg: "{{ new_config }}"
+      verbosity: 0 
+  - name: final list_merge
+    vars:
+      new_details:
+        details:
+          k8s: "{{ new_config }}"
+    set_fact:
+     new_inventorysources: "{{ new_inventorysources | default([]) | combine(new_details, recursive=True, ) }}"
+
+  - debug:
+      msg: "{{ new_inventorysources }}"
+      verbosity: 0 
+
+  - name: Set K8S Controller Options
+    vars:
+      data:  "{{ new_inventorysources }}"
+      id: "{{ new_inventorysources.id }}"
+    include_role:
+      name: set_ppdm_inventory      

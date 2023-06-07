@@ -1,0 +1,21 @@
+- name: Update PPDM Credentials
+  uri:
+    method: PUT
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/credentials/{{ id }}"
+    body_format: json
+    body: "{{ data }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,201,202,503
+    validate_certs: false
+  register: result  
+  retries: 10
+  delay: 30
+  until: result.status == 201 or result.status == 200
+  when: not ansible_check_mode 
+- set_fact:
+    credentials: "{{ result.json }}"  
+- debug:
+    msg: "{{ credentials }}" 
+    verbosity: 1   

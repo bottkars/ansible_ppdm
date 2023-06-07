@@ -1,0 +1,65 @@
+# Example Playbook to Install PPDM Update
+#
+# Note: Api is still called Upgrade, but Upgrade is for Hardware only !
+# SO tasks will be named update but execute Upgrade
+#
+- name: Upgrade PPDM
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"     
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: get Update Package
+    include_role: 
+      name: get_ppdm_update_package
+    vars:
+      filter: 'category eq "ACTIVE"' 
+
+  - name: get_ppdm_upgrade_by ID
+    when: update_package[0] is defined and update_package[0].upgradeError is not defined
+    include_role: 
+      name: get_ppdm_update_package
+    vars:
+      id: "{{ update_package[0].id }}"
+
+  - name: merge update body
+    vars:
+      my_new_config:
+        state: INSTALLED
+        certificateTrustedByUser: true
+        eula: 
+          productEulaAccepted: true # honor EULA Changes
+          telemetryEulaAccepted: true  # honor EULA Changes
+    set_fact:
+      update_package: "{{ update_package | default([]) | combine(my_new_config, recursive=True) }}"
+  - debug: 
+      msg: "{{ update_package }}"
+  - name: install_ppdm_upgrade
+    when: update_package is defined and update_package.state == "INSTALLED"
+    include_role: 
+      name: install_ppdm_update_package
+    vars:
+      id: "{{ update_package.id }}"
+      body: "{{ update_package }}"
+  - name: Validate Update Started
+    when: update_package is defined and update_package.upgradeError is not defined
+    include_role: 
+      name: get_ppdm_update_package
+    vars:
+      id: "{{ update_package.id }}"   
+  - name: Check Update State  https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role:
+      name: check_update_done             
+            

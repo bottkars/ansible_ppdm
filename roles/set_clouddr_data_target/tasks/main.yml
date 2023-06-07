@@ -1,0 +1,18 @@
+- name: Set C´louddr Data Target
+  uri:
+    method: POST
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/cloud-dr-accounts/{{ id }}/cloud-dr-data-targets"
+    body_format: json
+    body: "{{ body }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,201,400
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+- set_fact:
+    clouddr_data_target: "{{ result.json }}"
+- debug:
+    msg: "{{ clouddr_data_target }}"
+    verbosity: 0

@@ -1,0 +1,28 @@
+- name: Define uri with license ID
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/licenses/{{ id }}"
+  when: id  | default('', true) | trim != ''
+- name: Define uri without license id
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/licenses"
+  when: id  | default('', false) | trim == ''
+- name: Get PPDM licenses with status {{ condition }}
+  uri:
+    method: GET
+    url: "{{ uri }}"
+    body_format: json 
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,500
+    validate_certs: false
+  register: result
+  until: "{{ condition }}"    
+  retries: "{{ retries }}"
+  delay: "{{ delay }}"
+  when: not ansible_check_mode 
+- set_fact:
+    licenses: "{{ result.json.content }}"
+- debug:
+    msg: "{{ licenses[0].id }}"
+    verbosity: 0    

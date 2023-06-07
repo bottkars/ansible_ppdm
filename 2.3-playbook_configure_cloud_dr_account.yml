@@ -1,0 +1,70 @@
+# Example Playbok to Add DDVE to PPDM
+- name: Add DDVE to PPDM
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: GET CRA Component ID
+    include_role:
+      name: get_ppdm_components
+  - debug:
+      msg: "{{ components.content   | json_query(jmesquery) }}"
+    vars:
+      jmesquery: "[? componentServiceName=='cdr']"
+      verbosity: 0
+  - set_fact:
+      component_id:  "{{ components.content  | json_query(jmesquery) }}"
+    vars:      
+      jmesquery: "[? componentServiceName=='cdr'].id | [0]"
+
+  - name: GET CRA Component status
+    include_role:
+      name: get_ppdm_components
+    vars:
+      id: "{{ component_id }}"
+      retries: 20
+      delay: 5
+      condition: result.json.status == "UP"
+
+  - name: Get Cloud DR Account 
+    include_role:
+      name: get_clouddr_account
+    vars:
+      filter: providerName eq "AZURE"
+  - name: set cdra component 
+    include_role:
+      name: create_clouddr_account
+    vars:
+      status_codes: 200,201,202,503 ,400
+      data: 
+        providerName: AZURE
+        providerParameters:
+          - name: subscriptionId
+            value: "{{ subscriptionId }}"
+          - name: domain
+            value: "{{ domain }}"
+        userKey: "{{ userKey }}"
+        secretKey: "{{ secretKey }}"
+   # when: clouddr_accounts[0].id is not defined          
+     

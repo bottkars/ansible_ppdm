@@ -1,0 +1,33 @@
+- name: Define uri with package ID
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/upgrade-packages/{{ id }}"
+  when: id  | default('', true) | trim != ''
+- name: Define uri without package id
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/upgrade-packages"
+  when: id  | default('', false) | trim == ''
+- name: Rewrite uri with filter
+  set_fact: 
+    uri: "{{ uri }}?filter={{ filter | urlencode }}"  
+  when: filter  | default('', true) | trim != ''
+- name: Getting Upgrade Package State
+  uri:
+    method: GET
+    url: "{{ uri }}"
+    body_format: json
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,202,403
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+- set_fact:
+    update_package: "{{ result.json.content }}"
+  when: id  | default('', false) | trim == ''
+- set_fact:
+    update_package: "{{ result.json }}"
+  when: id  | default('', true) | trim != ''      
+- debug:
+    msg: "{{ update_package }}"
+    verbosity: 1

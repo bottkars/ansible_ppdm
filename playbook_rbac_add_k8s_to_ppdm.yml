@@ -1,0 +1,123 @@
+# This example Playbook adds a Kubernetes Cluster to PPDM
+# Kubernetes Information will be read from k8s core cluster_info module
+# it is expected that Environment Variables are set for core K8S Modules
+# e.g. export K8S_AUTH_KUBECONFIG= 
+- name: Add K8S to PPDM
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+#  - name: install pre-requisites
+#    pip:
+ #     name:
+#        - openshift
+#        - pyyaml
+#        - kubernetes 
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have a ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Setting Base URL
+    ansible.builtin.set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get Cluster information
+    kubernetes.core.k8s_cluster_info:
+#      verify_ssl: no
+    register: api_status
+  - debug: 
+      msg: "Connected to {{ api_status.connection.host }}"
+      verbosity: 0
+  - name: Setting Connection Parameters from api api_status
+    set_fact: 
+      k8s_fqdn: "{{ api_status.connection.host | regex_replace('^https://') | regex_replace('\\:\\d+') }}" 
+      k8s_port: "{{ api_status.connection.host.split(':').2 | default('443')}}"
+      k8s_name: "{{ api_status.connection.host.split('.').1 }}"
+  - name: apply PPDM RBAC
+    k8s:
+      verify_ssl: no
+      state: present
+      src: /home/bottk/workspace/ocs_vsphere/rbac/ppdm-controller-rbac.yaml     
+  - name: apply PPDM discovery
+    k8s:
+      verify_ssl: no
+      state: present
+      src: /home/bottk/workspace/ocs_vsphere/rbac/ppdm-discovery.yaml
+  - name: apply ppdm-discovery-serviceaccount-token
+  # we will run this at least 2 Times as the .data.token is not in the result output on 1st
+  # apply
+    kubernetes.core.k8s:
+      verify_ssl: no
+      state: present      
+      definition:
+        apiVersion: v1
+        kind: Secret
+        metadata:
+            name: ppdm-discovery-serviceaccount-token
+            namespace: powerprotect
+            annotations:
+              kubernetes.io/service-account.name: ppdm-discovery-serviceaccount
+        type: kubernetes.io/service-account-token
+        
+    register: token
+    retries: "4"
+    delay: "2"
+    until: token.result.data.token is defined
+  - debug: 
+      msg: "{{ token.result.data.token | b64decode }}"
+      verbosity: 1
+  - name: register token
+    ansible.builtin.set_fact:
+      k8s_token: "{{ token.result.data.token | b64decode }}"     
+  - debug: 
+      msg: "{{ k8s_fqdn }} {{ k8s_name }} {{ k8s_port }}"
+      verbosity: 1
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get Kubernetes Host Certificate for {{ k8s_fqdn }}
+    include_role:
+      name: get_ppdm_host_certificate  
+    vars: 
+      host: "{{ k8s_fqdn }}"
+      port: "{{ k8s_port }}"
+  - name: Accept K8S Host Certificate
+    include_role:
+      name: accept_ppdm_host_certificate  
+    vars: 
+      old_certificate: "{{ certificate }}"  
+  - name: "Ensure K8S Credentials ppdm-discovery-{{ k8s_fqdn }}"
+    vars:
+      data:
+        method: "TOKEN" 
+        name: "ppdm-discovery-{{ k8s_fqdn }}"
+        type: "KUBERNETES"        
+        password: "{{ k8s_token }}"
+    include_role:
+      name: create_ppdm_credentials    
+  - name: Ensure K8S Cluster {{ k8s_fqdn }} in Inventory
+    vars:
+      data:
+        name: "{{ k8s_fqdn }}"
+        type: "KUBERNETES"
+        address: "{{ k8s_fqdn }}"
+        port: "{{ k8s_port }}"
+        retries: 10
+        delay: 30
+        credentials: 
+            id: "{{ credentials.id }}"
+    include_role:
+      name: add_ppdm_inventory
+  - debug: 
+      msg: "{{ inventory }}"
+      verbosity: 1        

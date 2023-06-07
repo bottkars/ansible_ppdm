@@ -1,0 +1,37 @@
+# Example Playbook to Precheck PPDM Update
+#
+# Note: Api is still called Upgrade, but Upgrade is for Hardware only !
+# SO tasks will be named update but execute Upgrade
+#
+- name: Upgrade PPDM
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"     
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: get Update Package
+    include_role: 
+      name: get_ppdm_update_package
+    vars:
+      filter: 'category eq "ACTIVE"' 
+
+  - name: delete_ppdm_upgrade
+    when: update_package[0] is defined
+    include_role: 
+      name: delete_ppdm_update_package
+    vars:
+      id: "{{ update_package[0].id }}"
+  - debug: 
+      msg: "{{ result }}"

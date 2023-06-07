@@ -1,0 +1,15 @@
+- name: Wait for Appliance Update Done, this may take a few Minutes
+  uri:
+    method: GET
+    url: "{{ ppdm_baseurl }}:14443/upgrade/status"
+    status_code: 200 
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+  retries: 500
+  delay: 30
+  until: ( result.json is defined and result.json[0].percentageCompleted == "100" ) or ( result.json is defined and result.json[0].upgradeStatus =="FAILED" )
+- debug: 
+    msg: "{{ result.json }}"
+    verbosity: 0
+  when: result.json is defined  

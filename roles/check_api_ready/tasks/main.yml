@@ -1,0 +1,14 @@
+- name: Wait for Appliance Ready, this may take a few Minutes
+  uri:
+    method: GET
+    url: "{{ ppdm_baseurl }}:443/#/fresh"
+    status_code: 200,-1 
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+  retries: "100"
+  delay: "30"
+  until: result.status is defined and result.status == 200
+- debug: 
+    msg: "{{ result }}"
+    verbosity: 1

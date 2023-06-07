@@ -1,0 +1,19 @@
+- name: Wait for Appliance status Success
+  uri:
+    method: GET
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/configurations/{{ configuration_id }}/config-status"
+    body_format: json 
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+  until: result.json.status == "SUCCESS"
+  # is defined
+  retries: "{{ retry }}"
+  delay: "{{ wait }}"    
+- debug:
+    msg: "{{ result.json }}"
+    verbosity: 1

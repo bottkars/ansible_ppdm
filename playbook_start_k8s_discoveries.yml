@@ -1,0 +1,55 @@
+# Example Playbok to Add Kubernetes Cluster to PPDM
+- name: Discover PPDM K8S Inventory
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have a ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Setting Base URL
+    ansible.builtin.set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get Cluster information
+    kubernetes.core.k8s_cluster_info:
+    register: api_status
+  - debug: 
+      msg: "Connected to {{ api_status.connection.host }}"
+      verbosity: 0
+  - name: Setting Connection Parameters from api api_status
+    set_fact: 
+      k8s_fqdn: "{{ api_status.connection.host | regex_replace('^https://') | regex_replace('\\:\\d+') }}" 
+      k8s_port: "{{ api_status.connection.host.split(':').2 | default('443')}}"
+      k8s_name: "{{ api_status.connection.host.split('.').1 }}"
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://')  }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get PPDM inventory-sources for K8S "{{ new_k8s_api }}"
+    include_role: 
+      name: get_ppdm_inventory-sources
+    vars:
+      filter: address eq "{{ k8s_fqdn }}" & type eq "KUBERNETES"
+  - debug: 
+      msg: "{{ inventorysources }}"
+      verbosity: 1
+
+  - name: Run Discovery for K8S inventory-source  "{{ inventorysources[0].id }} "
+    include_role: 
+      name: run_ppdm_discoveries
+    vars:
+      inventorySource: "{{ inventorysources[0].id }}"

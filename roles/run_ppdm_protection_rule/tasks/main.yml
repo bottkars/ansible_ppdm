@@ -1,0 +1,16 @@
+- name: Run PPDM Protection Rule
+  uri:
+    method: POST
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/protection-rules-execution"
+    body_format: json
+    body: 
+      inventorySourceType: "{{ inventorySourceType }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+- set_fact:
+    protection_rule_run: "{{ result }}"

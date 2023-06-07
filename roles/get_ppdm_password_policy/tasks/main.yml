@@ -1,0 +1,23 @@
+
+- name: Define uri without id
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/policies/password"
+  when: id  | default('', false) | trim == ''
+- name: Get PPDM Password Policy
+  uri:
+    method: GET
+    url: "{{ uri }}"
+    body_format: json 
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,500
+    validate_certs: false
+  register: result
+  when: not ansible_check_mode 
+- set_fact:
+    password_policy: "{{ result.json }}"
+  when: result.json is defined and result.status == 200  
+- debug:
+    msg: "{{ password_policy }}"     
+    verbosity: 0     

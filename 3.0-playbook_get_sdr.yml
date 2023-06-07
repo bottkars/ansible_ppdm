@@ -1,0 +1,26 @@
+# Example Playbook to configure query PPDM Server Disaster Recovery
+- name: Set PPDM SDR
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"     
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get SDR Configuration Template
+    include_role: 
+      name: get_ppdm_sdr_configuration
+  - name: Current SDR Config
+    debug: 
+      msg: "{{ sdr_configuration }}"
+      verbosity: 0 

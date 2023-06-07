@@ -1,0 +1,18 @@
+- name: Enable Component
+  uri:
+    method: POST
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/components/{{ id }}/management"
+    body_format: json
+    body: "{{ body }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,202,403
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+- set_fact:
+    component_config: "{{ result.json }}"
+- debug:
+    msg: "{{ component_config }}"
+    verbosity: 0

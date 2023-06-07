@@ -1,0 +1,34 @@
+- name: Define uri with Account ID
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/cloud-dr-accounts/{{ id }}"
+  when: id  | default('', true) | trim != ''
+- name: Define uri without Credential id
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/cloud-dr-accounts"
+  when: id  | default('', false) | trim == ''
+- name: Rewrite uri with filter
+  set_fact: 
+    uri: "{{ uri }}?filter={{ filter | urlencode }}" 
+
+
+- name: GET PPDM CloudDR Accounts
+  uri:
+    method: GET
+    url: "{{ uri }}"
+    body_format: json
+#    body: "{{ data }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,201,202,503,400
+    validate_certs: false
+  register: result  
+#  retries: "10"
+#  delay: "30"
+#  until: result.status == 201 or result.status == 200
+  when: not ansible_check_mode   
+- set_fact:
+    clouddr_accounts: "{{ result.json.content }}"
+- debug:
+    msg: "{{ clouddr_accounts }}"     
+    verbosity: 0   

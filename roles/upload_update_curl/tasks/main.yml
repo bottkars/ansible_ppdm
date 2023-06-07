@@ -1,0 +1,7 @@
+# note: using curl here as uploads >=2GB still fail in ansible uri module ....
+- name: Uploading Upgrade File {{ upload_file }}, this may take a while
+  shell: 'curl -ks {{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/upgrade-packages \
+      -XPOST \
+      -H "content-type: multipart/form-data"  \
+      -H "authorization: Bearer {{ access_token }}" \
+      --form file=@{{ upload_file }}'

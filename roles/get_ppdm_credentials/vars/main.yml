@@ -1,0 +1,7 @@
+ppdm_api_ver: /api/v2
+ppdm_username: admin
+ppdm_port: 8443
+delay: 1
+retries: 1
+condition: result is defined
+filter: 

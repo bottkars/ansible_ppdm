@@ -1,0 +1,31 @@
+- name: Define uri with storage-systems ID
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/storage-systems/{{ id }}"
+  when: id  | default('', true) | trim != ''
+- name: Define uri without storage-systems id
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/storage-systems"
+  when: id  | default('', false) | trim == ''
+- name: Rewrite uri with filter
+  set_fact: 
+    uri: "{{ uri }}?filter={{ filter | urlencode }}"  
+- name: Get PPDM storage-systems with status {{ condition }}
+  uri:
+    method: GET
+    url: "{{ uri }}"
+    body_format: json 
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,500
+    validate_certs: false
+  register: result
+  until: "{{ condition }}"    
+  retries: "{{ retries }}"
+  delay: "{{ delay }}"
+  when: not ansible_check_mode 
+- set_fact:
+    storagesystems: "{{ result.json.content }}"
+- debug:
+    msg: "{{ storagesystems }}"
+    verbosity: 0    

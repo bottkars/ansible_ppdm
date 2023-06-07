@@ -1,0 +1,24 @@
+- name: Update PPDM Inventory
+  uri:
+    method: PUT
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/inventory-sources/{{ id }}"
+    body_format: json
+    body: "{{ data }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: -1,200,201,202,403,400
+    validate_certs: false
+    timeout: 60
+  register: result 
+  retries: "{{ retries }}"
+  delay: "{{ delay }}"
+  until: result.status <= 300 
+  when: not ansible_check_mode 
+- set_fact:
+#    inventory: "{{ result.json }}"
+    inventory: "{% set copy=result.json.copy() %}{% set removed=copy.pop('_links') %}{{ copy }}"
+
+- debug:
+    msg: "{{ inventory }}"
+    verbosity: 1

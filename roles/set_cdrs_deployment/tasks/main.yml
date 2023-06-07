@@ -1,0 +1,18 @@
+- name: Set CDRS Deployment
+  uri:
+    method: POST
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/cdrs-deployment"
+    body_format: json
+    body: "{{ body }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,201,202,400
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+- set_fact:
+    cdrs_deployment: "{{ result.json }}"
+- debug:
+    msg: "{{ cdrs_deployment }}"
+    verbosity: 0

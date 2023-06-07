@@ -1,0 +1,32 @@
+- name: Define uri with protection-policies ID
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/protection-policies/{{ id }}"
+  when: id  | default('', true) | trim != ''
+- name: Define uri without protection-policies id
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/protection-policies"
+  when: id  | default('', false) | trim == ''
+- name: Rewrite uri with filter
+  set_fact: 
+    uri: "{{ uri }}?filter={{ filter | urlencode }}"  
+  when: filter is defined   
+- name: Get PPDM protection-policies with status {{ condition }}
+  uri:
+    method: GET
+    url: "{{ uri }}"
+    body_format: json 
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,500
+    validate_certs: false
+  register: result
+  until: condition   
+  retries: "{{ retries }}"
+  delay: "{{ delay }}"
+  when: not ansible_check_mode 
+- set_fact:
+    protection_policy: "{{ result.json.content [0]}}"
+- debug:
+    msg: "{{ protection_policy }}"
+    verbosity: 0    

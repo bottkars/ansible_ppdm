@@ -1,0 +1,17 @@
+- name: Run PPDM Discoveries
+  uri:
+    method: POST
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/discoveries"
+    body_format: json
+    body: 
+      start: "/inventory-sources/{{ inventorySource }}"
+      level: "DataCopies"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,202
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+- set_fact:
+    protection_rule_run: "{{ result }}"

@@ -1,0 +1,23 @@
+- name: Add Certificate Chain
+  uri:
+    method: POST
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/certificates"
+    body_format: json
+    body: 
+      certificateChain: "{{ chain }}"
+      host: "{{ host }}"
+      port: "{{ port }}"
+      type: "{{ type }}"
+      verify: "{{ verify }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,201,202,403
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+- set_fact:
+    certificate: "{{ result.json }}"
+- debug:
+    msg: "{{ certificate }}"
+    verbosity: 0

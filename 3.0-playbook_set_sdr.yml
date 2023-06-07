@@ -1,0 +1,61 @@
+# Example Playbook to configure Server Desaster Recovery
+- name: Set PPDM SDR
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"     
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get SDR Configuration Template
+    include_role: 
+      name: get_ppdm_sdr_configuration
+  - name: Get Existing SDR Configuration
+    debug: 
+      msg: "{{ sdr_configuration }}"
+      verbosity: 0 
+  - name: Get DataDomain Inventory Sources
+    include_role: 
+      name: get_ppdm_storage-systems
+    vars:
+      filter: type eq "DATA_DOMAIN_SYSTEM" & orderby = name ASC & name eq "{{ ddve_fqdn }}" 
+  - name: Extract SDR Config ID
+    set_fact: 
+      sdr_configuration_id: "{{ item.value }}"
+    with_items: 
+        - "{{ sdr_configuration.properties }}"
+    when: item.name == 'configId'
+  - name: Extract SDR Repository ID for existing Repository
+    set_fact: 
+      repositoryPath: "{{ item.value }}"
+    with_items: 
+        - "{{ sdr_configuration.properties }}"
+    when: item.name == 'repositoryPath'
+  - name: Extract SDR Credential ID for existing Credentials
+    set_fact: 
+      credentialId: "{{ item.value }}"
+    with_items: 
+        - "{{ sdr_configuration.properties }}"
+    when: item.name == 'credentialId'                
+  - name: Set SDR Configuration
+    include_role: 
+      name: set_ppdm_sdr_configuration
+    vars:
+      data:
+        backupsEnabled: true
+        id: "{{ sdr_configuration_id }}"
+        repositoryHost: "{{ storagesystems[0].id }}"
+        credentialId: "{{ credentialId }}"
+        repositoryFilesystem: "BOOST_FILE_SYSTEM"
+        type: "DATA_DOMAIN_SYSTEM"        
+        

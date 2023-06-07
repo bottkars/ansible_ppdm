@@ -1,0 +1,5 @@
+ppdm_api_ver: /api/v2
+ppdm_username: admin
+ppdm_port: 8443
+ntpServers: 
+  - 40.119.6.228

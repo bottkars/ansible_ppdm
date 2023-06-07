@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  gather_facts: true
+  become: false
+  vars:
+    example_epoch_times:
+      - 1514764800
+      - 1519862400
+      - 1516253185
+      - 1511481600
+      - 1595548800
+      - 1517443199
+  tasks:
+    - set_fact:
+        _thirty_days_ago_epoch: "{{ (ansible_date_time['epoch']|int)-(86400) |to_datetime() }}"

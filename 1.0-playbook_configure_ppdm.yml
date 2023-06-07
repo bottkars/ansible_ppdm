@@ -1,0 +1,68 @@
+# Example Playbok to configure PPSM
+- name: Configure PPDM
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Checking Required Variable ppdm_timeZone
+    fail: 
+      msg: "We do not have ppdm_timeZone  set !"
+    when: (ppdm_timeZone is not defined) or (ppdm_timeZone|length == 0)        
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_setup_password  set !"
+    when: (ppdm_setup_password is not defined) or (ppdm_setup_password|length == 0)      
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"  
+  - name: Check Appliance Ready https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role:
+      name: check_api_ready       
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_setup_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: our do we have a token ?  
+  - name: Accept PPDM EULA
+    include_role:
+      name: accept_ppdm_eula  
+  - name: Get PPDM Configuration 
+    include_role: 
+      name: get_ppdm_configuration 
+  - set_fact:
+# prior 19.7, we published _links ....      new_config: "{% set copy=configuration.content[0].copy() %}{% set removed=copy.pop('_links') %}{{ copy }}"
+      new_config: "{% set copy=configuration.content[0].copy() %}{{ copy }}"
+    name: Generating Config from Appliance Config Template using jinja2 
+  - debug:
+      msg: "{{ new_config }}"
+      verbosity: 1
+
+  - name: Set New Configuration for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: new_ppdm_configuration
+    vars: 
+      one_password: "{{ ppdm_new_password }}"
+      ntpServers: "{{ ppdm_ntp_server }}"
+      timeZone: "{{ ppdm_timeZone }}"
+  - debug:
+      msg: "{{ configuration }}"
+      verbosity: 1
+  - name: Wait for Configuration finished for Appliance https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: wait_ppdm_config_finished
+    vars: 
+      configuration_id: "{{ new_config.id }}"
+     

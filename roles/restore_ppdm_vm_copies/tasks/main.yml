@@ -1,0 +1,40 @@
+- name: Define uri with assets ID
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/restored-copies"
+- name: Rewrite uri with filter
+  set_fact: 
+    uri: "{{ uri }}?filter={{ filter | urlencode }}"
+  when: filter  | default('', true) | trim != ''
+
+- name: restore asset copies to a vm
+  uri:
+    method: POST
+    url: "{{ uri }}"
+    body_format: json
+    body:
+      description: "Restore VM {{ asset.name }} from copy id {{ copy.id }} at {{ copy.createTime }} to original production storage {{ message }}"
+      copyIds:
+        - "{{ copy.id }}"
+      restoreType: TO_PRODUCTION
+      options:
+        enableCompressedRestore: false
+      restoredCopiesDetails:
+        targetVmInfo:
+          tagRestoreDirective: 'OFF'
+          spbmRestoreDirective: FROM_COPY
+          recoverConfig: true 
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 201,200,500
+    validate_certs: false
+  register: result
+  until: "{{ condition }}"    
+  retries: "{{ retries }}"
+  delay: "{{ delay }}"
+  when: not ansible_check_mode 
+- set_fact:
+    restore: "{{ result.json }}"
+- debug:
+    msg: "{{ restore }}"
+    verbosity: 1    
