@@ -41,12 +41,12 @@
     k8s:
       verify_ssl: no
       state: present
-      src: /home/bottk/workspace/ocs_vsphere/rbac/ppdm-controller-rbac.yaml     
+      src: "{{ rbac_source }}/ppdm-controller-rbac.yaml"    
   - name: apply PPDM discovery
     k8s:
       verify_ssl: no
       state: present
-      src: /home/bottk/workspace/ocs_vsphere/rbac/ppdm-discovery.yaml
+      src: "{{ rbac_source }}/ppdm-discovery.yaml"
   - name: apply ppdm-discovery-serviceaccount-token
   # we will run this at least 2 Times as the .data.token is not in the result output on 1st
   # apply
@@ -88,7 +88,7 @@
   - name: Get Kubernetes Host Certificate for {{ k8s_fqdn }}
     include_role:
       name: get_ppdm_host_certificate  
-    vars: 
+    vars:  
       host: "{{ k8s_fqdn }}"
       port: "{{ k8s_port }}"
   - name: Accept K8S Host Certificate
@@ -112,10 +112,11 @@
         type: "KUBERNETES"
         address: "{{ k8s_fqdn }}"
         port: "{{ k8s_port }}"
-        retries: 10
-        delay: 30
+
         credentials: 
             id: "{{ credentials.id }}"
+      retries: 10
+      delay: 30      
     include_role:
       name: add_ppdm_inventory
   - debug: 
