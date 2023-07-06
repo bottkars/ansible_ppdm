@@ -1,0 +1,63 @@
+# Example Playbok to Add DDVE to PPDM
+- name: Get PPDM FLR Session
+  hosts: localhost
+  connection: local
+#  vars:
+#    flr_session.flrSessionId: ddaa4cc8-c2da-4058-9b28-c8d17200c62e
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+
+  - name: get_flr_session
+    include_role:
+      name: get_flr_session
+    vars: 
+      id: "{{ flr_session.flrSessionId }}/files/"
+
+
+  - name: modify_flr_session
+    include_role:
+      name: modify_flr_session
+    vars: 
+      id: "{{ flr_session.flrSessionId }}"
+      data:
+        directory: /home/bottk
+        browseDest: true
+
+  - name: get_flr_session
+    include_role:
+      name: get_flr_session
+    vars: 
+      id: "{{ flr_session.flrSessionId }}/files/"
+
+  - name: create_flr_restore
+    include_role:
+      name: create_flr_restore
+    vars: 
+      id: "{{ flr_session.flrSessionId }}"
+      data:
+        targetDirectory: "/tmp"
+        filePaths:
+        - "/home/bottk/wget-log.2"
+        overwriteExisting: true
+        restoreToOriginalPath: false 

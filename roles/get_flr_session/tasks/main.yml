@@ -1,0 +1,25 @@
+- name: Define uri with FLR Session  ID
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/flr-sessions/{{ id }}"
+  when: id  | default('', true) | trim != ''
+
+- name: Get PPDM FLR Sessions
+  uri:
+    method: GET
+    url: "{{ uri }}"
+    body_format: json 
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,500
+    validate_certs: false
+  retries: 20 
+  delay:  30
+  register: result
+  when: not ansible_check_mode 
+  until: result is defined and result.status == 200
+- set_fact:
+    flr_session_data: "{{ result.json }}"
+- debug:
+    msg: "{{ flr_session_data }}"
+    verbosity: 0    

@@ -66,3 +66,10 @@ create a kubernetes policy and rule ...
 ```bash
 ansible-playbook ~/workspace/ansible_ppdm/playbook_add_k8s_policy_and_rule.yml 
 ```
+
+## Some advanced K8S
+{"details":{"k8s":{"configurations":[{"type":"CONTROLLER_CONFIG","key":"k8s.ppdm.vspherecsi.use.fsagent","value":"true"},{"type":"CONTROLLER_CONFIG","key":"k8s.docker.registry","value":"harbor.pks.home.labbuildr.com"},{"type":"CONTROLLER_CONFIG","key":"ppdm.backup.concurrency","value":"2"},{"type":"CONTROLLER_CONFIG","key":"k8s.image.pullsecrets","value":"regcred"}]}}}
+```bash
+
+
+```

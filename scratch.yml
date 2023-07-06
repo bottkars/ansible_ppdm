@@ -1,32 +1,23 @@
-  - name: creating configurations
-    vars:
-      old_config:
-        configurations: "{{ new_config }}"
-      my_new_config:
-        configurations:
-        - key: k8s.velero.exclude.resources
-          type: CONTROLLER_CONFIG
-          value: secrets, operators.operator.openshift.io, cloudcredentials.operator.openshift.io, clusteroperators.config.openshift.io, rolebindings,events, events.events.k8s.io,customresourcedefinitions.apiextensions.k8s.io, build.openshift.io, prometheusrules.monitoring.coreos.com
-    set_fact:
-      new_config: "{{ old_config | default([]) | combine(my_new_config, list_merge='append',recursive=True, ) }}"
-  - debug:
-      msg: "{{ new_config }}"
-      verbosity: 0 
-  - name: final list_merge
-    vars:
-      new_details:
-        details:
-          k8s: "{{ new_config }}"
-    set_fact:
-     new_inventorysources: "{{ new_inventorysources | default([]) | combine(new_details, recursive=True, ) }}"
 
-  - debug:
-      msg: "{{ new_inventorysources }}"
-      verbosity: 0 
 
-  - name: Set K8S Controller Options
-    vars:
-      data:  "{{ new_inventorysources }}"
-      id: "{{ new_inventorysources.id }}"
-    include_role:
-      name: set_ppdm_inventory      
+initiate FLR Session
+/api/v2/flr-sessions
+---
+copyId: 178050da-5cf8-5732-ae28-5cac05229d7b
+targetVmAssetId: 2def57c4-2278-57cf-b0a0-b0a716c1791b
+targetUser: root
+targetPassword: lola2605
+removeAgent: false
+elevateUser: false
+
+
+
+FLR restore DATA
+
+
+---
+targetDirectory: "/home/bottk"
+filePaths:
+- "/home/bottk/wget-log.2"
+overwriteExisting: true
+restoreToOriginalPath: false

@@ -1,0 +1,19 @@
+- name: Create New PPDM FLR Session
+  uri:
+    method: POST
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/flr-sessions"
+    body_format: json
+    body: "{{ data }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,201,202,503
+    validate_certs: false
+  register: result  
+  when: not ansible_check_mode 
+- set_fact:
+    flr_session: "{{ result.json }}"
+- debug:
+    msg: "{{ flr_session }}"
+    verbosity: 0
+  when: flr_session is defined   

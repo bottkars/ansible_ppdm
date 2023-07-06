@@ -1,0 +1,24 @@
+- name: Define uri with FLR Session  ID
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/flr-sessions/{{ id }}"
+  when: id  | default('', true) | trim != ''
+
+- name: Modify PPDM FLR Sessions
+  uri:
+    method: PUT
+    url: "{{ uri }}"
+    body_format: json
+    body: "{{ data }}"
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 200,500
+    validate_certs: false
+  register: result
+  when: not ansible_check_mode 
+  until: result.json is defined 
+- set_fact:
+    fls_session_data: "{{ result.json }}"
+- debug:
+    msg: "{{ fls_session_data }}"
+    verbosity: 0    
