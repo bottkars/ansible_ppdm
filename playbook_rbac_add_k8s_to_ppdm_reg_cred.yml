@@ -82,7 +82,7 @@
       definition:
         apiVersion: v1
         data:
-          .dockerconfigjson: eyJhdXRocyI6eyJoYXJib3IucGtzLmhvbWUubGFiYnVpbGRyLmNvbSI6eyJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiJCcmVkYTEyMDgiLCJlbWFpbCI6ImFkbWluQGxhYmJ1aWxkci5jb20iLCJhdXRoIjoiWVdSdGFXNDZRbkpsWkdFeE1qQTQifX19
+          .dockerconfigjson: "{{ dockerconfigjson }}"
         kind: Secret
         metadata:
           name: regcred
@@ -104,7 +104,7 @@
       definition:
         apiVersion: v1
         data:
-          .dockerconfigjson: eyJhdXRocyI6eyJoYXJib3IucGtzLmhvbWUubGFiYnVpbGRyLmNvbSI6eyJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiJCcmVkYTEyMDgiLCJlbWFpbCI6ImFkbWluQGxhYmJ1aWxkci5jb20iLCJhdXRoIjoiWVdSdGFXNDZRbkpsWkdFeE1qQTQifX19
+          .dockerconfigjson: "{{ dockerconfigjson }}"
         kind: Secret
         metadata:
           name: regcred
