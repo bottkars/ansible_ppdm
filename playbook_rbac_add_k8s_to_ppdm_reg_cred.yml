@@ -62,7 +62,6 @@
             annotations:
               kubernetes.io/service-account.name: ppdm-discovery-serviceaccount
         type: kubernetes.io/service-account-token
-        
     register: token
     retries: "4"
     delay: "2"
@@ -76,6 +75,41 @@
   - debug: 
       msg: "{{ k8s_fqdn }} {{ k8s_name }} {{ k8s_port }}"
       verbosity: 1
+  - name: Ensure Registry Credentials in powerprotect
+    kubernetes.core.k8s:
+      verify_ssl: no
+      state: present
+      definition:
+        apiVersion: v1
+        data:
+          .dockerconfigjson: eyJhdXRocyI6eyJoYXJib3IucGtzLmhvbWUubGFiYnVpbGRyLmNvbSI6eyJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiJCcmVkYTEyMDgiLCJlbWFpbCI6ImFkbWluQGxhYmJ1aWxkci5jb20iLCJhdXRoIjoiWVdSdGFXNDZRbkpsWkdFeE1qQTQifX19
+        kind: Secret
+        metadata:
+          name: regcred
+          namespace: powerprotect
+        type: kubernetes.io/dockerconfigjson   
+  - name: Ensure NmmeSpace velero-ppdm
+    kubernetes.core.k8s:
+      verify_ssl: no
+      state: present
+      definition:
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: velero-ppdm
+  - name: Ensure Registry Credentials in velero-ppdm
+    kubernetes.core.k8s:
+      verify_ssl: no
+      state: present
+      definition:
+        apiVersion: v1
+        data:
+          .dockerconfigjson: eyJhdXRocyI6eyJoYXJib3IucGtzLmhvbWUubGFiYnVpbGRyLmNvbSI6eyJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiJCcmVkYTEyMDgiLCJlbWFpbCI6ImFkbWluQGxhYmJ1aWxkci5jb20iLCJhdXRoIjoiWVdSdGFXNDZRbkpsWkdFeE1qQTQifX19
+        kind: Secret
+        metadata:
+          name: regcred
+          namespace: velero-ppdm
+        type: kubernetes.io/dockerconfigjson           
   - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
     include_role: 
       name: get_ppdm_token
