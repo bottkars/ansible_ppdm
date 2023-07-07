@@ -2,7 +2,7 @@
 # Kubernetes Information will be read from k8s core cluster_info module
 # it is expected that Environment Variables are set for core K8S Modules
 # e.g. export K8S_AUTH_KUBECONFIG= 
-- name: Add K8S to PPDM
+- name: Get K8S Info
   hosts: localhost
   connection: local
   vars_files: 
