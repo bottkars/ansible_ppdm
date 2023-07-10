@@ -4,6 +4,8 @@
   connection: local
   vars_files: 
     - ./vars/main.yml
+  collections:
+   - kubernetes.core     
   tasks:
   - name: Checking Required Variables
     fail: 

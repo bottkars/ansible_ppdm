@@ -7,13 +7,9 @@
   connection: local
   vars_files: 
     - ./vars/main.yml
+  collections:
+   - kubernetes.core     
   tasks:
-#  - name: install pre-requisites
-#    pip:
- #     name:
-#        - openshift
-#        - pyyaml
-#        - kubernetes 
   - name: Checking Required Variables
     fail: 
       msg: "We do not have a ppdm fqdn set !"

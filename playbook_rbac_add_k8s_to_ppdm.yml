@@ -7,6 +7,8 @@
   connection: local
   vars_files: 
     - ./vars/main.yml
+  collections:
+   - kubernetes.core     
   tasks:
 #  - name: install pre-requisites
 #    pip:
