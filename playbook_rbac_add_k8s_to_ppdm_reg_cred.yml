@@ -2,7 +2,7 @@
 # Kubernetes Information will be read from k8s core cluster_info module
 # it is expected that Environment Variables are set for core K8S Modules
 # e.g. export K8S_AUTH_KUBECONFIG= 
-- name: Add K8S to PPDM
+- name: Ensure Kubernetes Configuration in PPDM 
   hosts: localhost
   connection: local
   vars_files: 
@@ -75,7 +75,7 @@
   - debug: 
       msg: "{{ k8s_fqdn }} {{ k8s_name }} {{ k8s_port }}"
       verbosity: 1
-  - name: Ensure Registry Credentials in powerprotect
+  - name: ensure registry secrets in powerprotect namespace
     kubernetes.core.k8s:
       verify_ssl: no
       state: present
@@ -88,7 +88,7 @@
           name: regcred
           namespace: powerprotect
         type: kubernetes.io/dockerconfigjson   
-  - name: Ensure NmmeSpace velero-ppdm
+  - name: ensure namespace velero-ppdm
     kubernetes.core.k8s:
       verify_ssl: no
       state: present
@@ -97,7 +97,7 @@
         kind: Namespace
         metadata:
           name: velero-ppdm
-  - name: Ensure Registry Credentials in velero-ppdm
+  - name: ensure registry secrets in velero-ppdm namespace
     kubernetes.core.k8s:
       verify_ssl: no
       state: present
