@@ -23,7 +23,7 @@
       ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
   - name: Get Cluster information
     kubernetes.core.k8s_cluster_info:
-      verify_ssl: no
+#      verify_ssl: no
     register: api_status
   - debug: 
       msg: "Connected to {{ api_status.connection.host }}"
@@ -35,19 +35,19 @@
       k8s_name: "{{ api_status.connection.host.split('.').1 }}"
   - name: apply PPDM RBAC
     k8s:
-      verify_ssl: no
+#      verify_ssl: no
       state: present
       src: "{{ rbac_source }}/ppdm-controller-rbac.yaml"    
   - name: apply PPDM discovery
     k8s:
-      verify_ssl: no
+#      verify_ssl: no
       state: present
       src: "{{ rbac_source }}/ppdm-discovery.yaml"
   - name: apply ppdm-discovery-serviceaccount-token
   # we will run this at least 2 Times as the .data.token is not in the result output on 1st
   # apply
     kubernetes.core.k8s:
-      verify_ssl: no
+#      verify_ssl: no
       state: present      
       definition:
         apiVersion: v1
@@ -73,7 +73,7 @@
       verbosity: 1
   - name: ensure registry secrets in powerprotect namespace
     kubernetes.core.k8s:
-      verify_ssl: no
+#      verify_ssl: no
       state: present
       definition:
         apiVersion: v1
@@ -86,7 +86,7 @@
         type: kubernetes.io/dockerconfigjson   
   - name: ensure namespace velero-ppdm
     kubernetes.core.k8s:
-      verify_ssl: no
+#      verify_ssl: no
       state: present
       definition:
         apiVersion: v1
@@ -95,7 +95,7 @@
           name: velero-ppdm
   - name: ensure registry secrets in velero-ppdm namespace
     kubernetes.core.k8s:
-      verify_ssl: no
+#      verify_ssl: no
       state: present
       definition:
         apiVersion: v1
@@ -108,7 +108,7 @@
         type: kubernetes.io/dockerconfigjson
   - name: ensure velero serviceaccount in namespace velero-ppdm
     kubernetes.core.k8s:
-      verify_ssl: no
+#      verify_ssl: no
       state: present
       definition:
         apiVersion: v1
