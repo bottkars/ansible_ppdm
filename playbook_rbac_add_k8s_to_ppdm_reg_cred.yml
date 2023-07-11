@@ -105,7 +105,22 @@
         metadata:
           name: regcred
           namespace: velero-ppdm
-        type: kubernetes.io/dockerconfigjson           
+        type: kubernetes.io/dockerconfigjson
+  - name: ensure velero serviceaccount in namespace velero-ppdm
+    kubernetes.core.k8s:
+      verify_ssl: no
+      state: present
+      definition:
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          labels:
+            component: velero
+          name: velero
+          namespace: velero-ppdm 
+        imagePullSecrets:
+        - name: regcred  
+
   - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
     include_role: 
       name: get_ppdm_token
