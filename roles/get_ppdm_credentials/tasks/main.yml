@@ -21,7 +21,7 @@
     status_code: 200,500,503
     validate_certs: false
   register: result
-  when: not ansible_check_mode 
+  ignore_errors: '{{ ansible_check_mode }}' 
 - set_fact:
     credentials: "{{ result.json.content }}"
   when: result.json.content[0].id is defined and result.status == 200  

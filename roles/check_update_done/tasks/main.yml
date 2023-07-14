@@ -5,7 +5,7 @@
     status_code: 200 
     validate_certs: false
   register: result  
-  when: not ansible_check_mode 
+  ignore_errors: '{{ ansible_check_mode }}' 
   retries: 500
   delay: 30
   until: ( result.json is defined and result.json[0].percentageCompleted == "100" ) or ( result.json is defined and result.json[0].upgradeStatus =="FAILED" )

@@ -9,7 +9,7 @@
     status_code: 200
     validate_certs: false
   register: result  
-  when: not ansible_check_mode 
+  ignore_errors: '{{ ansible_check_mode }}' 
   until: result.json.status == "SUCCESS"
   # is defined
   retries: "{{ retry }}"

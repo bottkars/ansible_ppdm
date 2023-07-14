@@ -5,7 +5,7 @@
     status_code: 200,-1 
     validate_certs: false
   register: result  
-  when: not ansible_check_mode 
+  ignore_errors: '{{ ansible_check_mode }}' 
   retries: "100"
   delay: "30"
   until: result.status is defined and result.status == 200

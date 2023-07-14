@@ -10,7 +10,7 @@
     status_code: 200,201,202,503
     validate_certs: false
   register: result  
-  when: not ansible_check_mode 
+  ignore_errors: '{{ ansible_check_mode }}' 
 - set_fact:
     flr_session: "{{ result.json }}"
 - debug:

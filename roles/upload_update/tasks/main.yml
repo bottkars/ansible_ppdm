@@ -17,7 +17,7 @@
     force: yes
     timeout: 60
   register: result  
-  when: not ansible_check_mode 
+  ignore_errors: '{{ ansible_check_mode }}' 
 - set_fact:
     upload_result: "{{ result.json }}"
 - debug:

@@ -39,7 +39,7 @@
   retries: "{{ retries }}"
   delay: "{{ delay }}"
   until: result.status <= 300 
-  when: not ansible_check_mode and inventory.id is not defined
+  ignore_errors: '{{ ansible_check_mode }}' and inventory.id is not defined
 - set_fact:
 #    inventory: "{{ result.json }}"
     inventory: "{% set copy=result.json.copy() %}{% set removed=copy.pop('_links') %}{{ copy }}"

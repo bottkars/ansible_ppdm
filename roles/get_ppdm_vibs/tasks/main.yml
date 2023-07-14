@@ -17,7 +17,7 @@
   until: "{{ condition }}"    
   retries: "{{ retries }}"
   delay: "{{ delay }}"
-  when: not ansible_check_mode 
+  ignore_errors: '{{ ansible_check_mode }}' 
 - set_fact:
     vibdetails: "{{ result.json.content }}"
 - debug:

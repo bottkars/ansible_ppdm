@@ -16,7 +16,7 @@
   retries: 20 
   delay:  30
   register: result
-  when: not ansible_check_mode 
+  ignore_errors: '{{ ansible_check_mode }}' 
   until: result is defined and result.status == 200
 - set_fact:
     flr_session_data: "{{ result.json }}"
