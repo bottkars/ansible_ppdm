@@ -42,7 +42,7 @@
         eula: 
           productEulaAccepted: true # honor EULA Changes
           telemetryEulaAccepted: true  # honor EULA Changes
-        sizeInBytes:  "{{ update_package.sizeInBytes | int }}" 
+        sizeInBytes:  {{ update_package.sizeInBytes | int }}
     set_fact:
       update_package: "{{ update_package | default([]) | combine(my_new_config, recursive=True) }}"
   - debug: 
