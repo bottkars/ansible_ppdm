@@ -1,7 +1,7 @@
 - name: Define uri with storage-systems ID
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/storage-systems/{{ id }}"
-  when: id  | default('', true) | trim != ''
+  when: id is defined and id != ''
 - name: Define uri without storage-systems id
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/storage-systems"

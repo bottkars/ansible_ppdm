@@ -1,7 +1,7 @@
 - name: Define uri with assets ID
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/assets/{{ id }}"
-  when: id  | default('', true) | trim != ''
+  when: id is defined and id != ''
 - name: Define uri without assets id
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/assets"

@@ -74,7 +74,7 @@
 #  - name: select 1st credential
 #    set_fact:
 #      credentials: "{{ credentials[0] }}"
-#    when: credentials[0].id  | default('', true) | trim != ''  
+#    when: credentials[0].id is defined and id != ''  
 #  - debug:
 #      msg: "{{ credentials }}"     
 #      verbosity: 0     

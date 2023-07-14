@@ -1,7 +1,7 @@
 - name: Define uri with activities ID
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/activities/{{ id }}"
-  when: id  | default('', true) | trim != ''
+  when: id is defined and id != ''
 - name: Define uri without activities id
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/activities"

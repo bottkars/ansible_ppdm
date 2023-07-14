@@ -1,7 +1,7 @@
 - name: Define uri with Account ID
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/cloud-dr-accounts/{{ id }}"
-  when: id  | default('', true) | trim != ''
+  when: id is defined and id != ''
 - name: Define uri without Credential id
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/cloud-dr-accounts"
