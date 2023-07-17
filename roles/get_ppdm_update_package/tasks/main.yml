@@ -1,7 +1,7 @@
 - name: Define uri with package ID
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/upgrade-packages/{{ id }}"
-  when: id is defined and id != ''
+  when: id  | default('', true) | trim != ''
 - name: Define uri without package id
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/upgrade-packages"
@@ -21,13 +21,13 @@
     status_code: 200,202,403
     validate_certs: false
   register: result  
-  ignore_errors: '{{ ansible_check_mode }}' 
+  when: not ansible_check_mode 
 - set_fact:
     update_package: "{{ result.json.content }}"
   when: id  | default('', false) | trim == ''
 - set_fact:
     update_package: "{{ result.json }}"
-  when: id is defined and id != ''      
+  when: id  | default('', true) | trim != ''      
 - debug:
     msg: "{{ update_package }}"
     verbosity: 1

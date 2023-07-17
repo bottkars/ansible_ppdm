@@ -13,7 +13,7 @@
 #  retries: "10"
 #  delay: "30"
 #  until: result.status == 201 or result.status == 200
-  ignore_errors: '{{ ansible_check_mode }}'  
+  when: not ansible_check_mode  
 - set_fact:
     update: "{{ result.json }}"
 - debug:

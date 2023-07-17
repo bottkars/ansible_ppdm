@@ -14,7 +14,7 @@
     status_code: 200,201
     validate_certs: false
   register: result  
-  ignore_errors: '{{ ansible_check_mode }}'
+  when: not ansible_check_mode
 
 - debug:
     msg: "{{ result.json }}"

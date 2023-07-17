@@ -1,7 +1,7 @@
 - name: Define uri with inventory-sources ID
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/inventory-sources/{{ id }}"
-  when: id is defined and id != ''
+  when: id  | default('', true) | trim != ''
 - name: Define uri without inventory-sources id
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/inventory-sources"
@@ -23,7 +23,7 @@
   until: condition   
   retries: "{{ retries }}"
   delay: "{{ delay }}"
-  ignore_errors: '{{ ansible_check_mode }}' 
+  when: not ansible_check_mode 
 - set_fact:
     inventorysources: "{{ result.json.content }}"
 - debug:

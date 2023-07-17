@@ -1,7 +1,7 @@
 - name: Define uri with Credential ID
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/credentials/{{ id }}"
-  when: id is defined and id != ''
+  when: id  | default('', true) | trim != ''
 - name: Define uri without Credential id
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/credentials"
@@ -21,7 +21,7 @@
     status_code: 200,500,503
     validate_certs: false
   register: result
-  ignore_errors: '{{ ansible_check_mode }}' 
+  when: not ansible_check_mode 
 - set_fact:
     credentials: "{{ result.json.content }}"
   when: result.json.content[0].id is defined and result.status == 200  

@@ -10,7 +10,7 @@
     status_code: 200,201,202,400
     validate_certs: false
   register: result  
-  ignore_errors: '{{ ansible_check_mode }}' 
+  when: not ansible_check_mode 
 - set_fact:
     cdrs_deployment: "{{ result.json }}"
 - debug:

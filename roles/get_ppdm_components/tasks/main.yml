@@ -1,7 +1,7 @@
 - name: Define uri with Component ID
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/components/{{ id }}"
-  when: id is defined and id != ''
+  when: id  | default('', true) | trim != ''
 - name: Define uri without Component id
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/components"
@@ -20,6 +20,6 @@
   until: "{{ condition }}"    
   retries: "{{ retries }}"
   delay: "{{ delay }}"
-  ignore_errors: '{{ ansible_check_mode }}' 
+  when: not ansible_check_mode 
 - set_fact:
     components: "{{ result.json }}"

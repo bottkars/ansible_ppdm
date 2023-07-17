@@ -1,7 +1,7 @@
 - name: Define uri with activities ID
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/activities/{{ id }}"
-  when: id is defined and id != ''
+  when: id  | default('', true) | trim != ''
 - name: Define uri without activities id
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/activities"
@@ -25,7 +25,7 @@
   until: "{{ condition }}"    
   retries: "{{ retries }}"
   delay: "{{ delay }}"
-  ignore_errors: '{{ ansible_check_mode }}' 
+  when: not ansible_check_mode 
 - set_fact:
     activities: "{{ result.json.content }}"
 - debug:

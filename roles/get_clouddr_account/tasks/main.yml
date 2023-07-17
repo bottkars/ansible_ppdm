@@ -1,7 +1,7 @@
 - name: Define uri with Account ID
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/cloud-dr-accounts/{{ id }}"
-  when: id is defined and id != ''
+  when: id  | default('', true) | trim != ''
 - name: Define uri without Credential id
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/cloud-dr-accounts"
@@ -26,7 +26,7 @@
 #  retries: "10"
 #  delay: "30"
 #  until: result.status == 201 or result.status == 200
-  ignore_errors: '{{ ansible_check_mode }}'   
+  when: not ansible_check_mode   
 - set_fact:
     clouddr_accounts: "{{ result.json.content }}"
 - debug:

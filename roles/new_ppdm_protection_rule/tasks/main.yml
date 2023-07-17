@@ -13,6 +13,6 @@
     status_code: 200,201,202,403
     validate_certs: false
   register: result  
-  ignore_errors: '{{ ansible_check_mode }}' 
+  when: not ansible_check_mode 
 - set_fact:
     protection_rule: "{{ result.json }}"

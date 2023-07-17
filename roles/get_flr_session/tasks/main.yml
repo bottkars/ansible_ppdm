@@ -1,7 +1,7 @@
 - name: Define uri with FLR Session  ID
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/flr-sessions/{{ id }}"
-  when: id is defined and id != ''
+  when: id  | default('', true) | trim != ''
 
 - name: Get PPDM FLR Sessions
   uri:
@@ -16,7 +16,7 @@
   retries: 20 
   delay:  30
   register: result
-  ignore_errors: '{{ ansible_check_mode }}' 
+  when: not ansible_check_mode 
   until: result is defined and result.status == 200
 - set_fact:
     flr_session_data: "{{ result.json }}"

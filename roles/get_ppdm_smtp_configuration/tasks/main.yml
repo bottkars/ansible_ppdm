@@ -1,7 +1,7 @@
 - name: Define uri with SMTP ID
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/smtp/{{ id }}"
-  when: id is defined and id != ''
+  when: id  | default('', true) | trim != ''
 - name: Define uri without SMTP id
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/smtp"
@@ -17,6 +17,6 @@
     status_code: 200,500
     validate_certs: false
   register: result
-  ignore_errors: '{{ ansible_check_mode }}' 
+  when: not ansible_check_mode 
 - set_fact:
     smtp_configuration: "{{ result.json.content }}"

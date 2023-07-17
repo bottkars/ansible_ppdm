@@ -14,7 +14,7 @@
     status_code: 200,500
     validate_certs: false
   register: result
-  ignore_errors: '{{ ansible_check_mode }}' 
+  when: not ansible_check_mode 
 - set_fact:
     password_policy: "{{ result.json }}"
   when: result.json is defined and result.status == 200  

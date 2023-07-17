@@ -32,7 +32,7 @@
   until: "{{ condition }}"    
   retries: "{{ retries }}"
   delay: "{{ delay }}"
-  ignore_errors: '{{ ansible_check_mode }}' 
+  when: not ansible_check_mode 
 - set_fact:
     restore: "{{ result.json }}"
 - debug:

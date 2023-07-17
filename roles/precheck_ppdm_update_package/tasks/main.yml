@@ -13,7 +13,7 @@
   retries: 20
   delay: 45
   until: result.json.state is defined and result.json.state == "PROCESSING"
-  ignore_errors: '{{ ansible_check_mode }}'  
+  when: not ansible_check_mode  
 - set_fact:
     update_precheck: "{{ result.json }}"
 - debug:
@@ -32,7 +32,7 @@
   register: result 
   retries: 20 
   delay:  30
-  ignore_errors: '{{ ansible_check_mode }}' 
+  when: not ansible_check_mode 
   until: result.json.validationDetails is defined and result.json.state == "AVAILABLE"
 - set_fact:
     validation_details: "{{ result.json.validationDetails }}"   

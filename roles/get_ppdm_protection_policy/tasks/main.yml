@@ -1,7 +1,7 @@
 - name: Define uri with protection-policies ID
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/protection-policies/{{ id }}"
-  when: id is defined and id != ''
+  when: id  | default('', true) | trim != ''
 - name: Define uri without protection-policies id
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/protection-policies"
@@ -24,7 +24,7 @@
   until: condition   
   retries: "{{ retries }}"
   delay: "{{ delay }}"
-  ignore_errors: '{{ ansible_check_mode }}' 
+  when: not ansible_check_mode 
 - set_fact:
     protection_policy: "{{ result.json.content [0]}}"
 - debug:
