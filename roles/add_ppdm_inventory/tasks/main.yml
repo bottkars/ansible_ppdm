@@ -10,7 +10,10 @@
 - set_fact:
     inventory: "{{ inventorysources[0] | default([]) | combine(data, recursive=True) }}"
   when: inventorysources[0].id is defined
-
+- set_fact:
+#    stripping data
+    inventory: "{% set copy=inventorysource.copy() %}{% set removed=copy.pop('_links') %}{{ copy }}"
+  when: inventory.id is defined
 - name: Update PPDM Inventory for {{ inventory.name }}
   vars:
     data:  "{{ inventory }}"
