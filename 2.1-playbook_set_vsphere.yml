@@ -73,14 +73,14 @@
       filter: type eq "VCENTER" & orderby = name ASC & name eq "{{ vcenter_fqdn }}"     
 
   - name: Add VCENTER {{ vcenter_fqdn }} to Inventory
-    vars:
+    vars:        
+      retries: 10
+      delay: 60
       data:
         name: "{{ vcenter_fqdn }}"
         type: "VCENTER"
         address: "{{ vcenter_fqdn }}"
         port: 443
-        retries: 20
-        delay: 60
         credentials: 
             id: "{{ credentials.id }}"
     include_role:
