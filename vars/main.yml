@@ -12,7 +12,7 @@ ppdm_smtp_port: "{{ lookup('env','PPDM_SMTP_PORT') }}"
 ppdm_smtp_mailFrom: "{{ lookup('env','PPDM_SMTP_FROM') }}"
 k8s_fqdn: "{{ lookup('env','K8S_FQDN') }}"
 ppdm_rule: "ppdm_policy={{ lookup('env','PPDM_POLICY')}}"
-k8s_port: "443"
+k8s_port: 443
 k8s_token: "{{ lookup('env','PPDM_K8S_TOKEN') }}"
 k8s_name: "{{ lookup('env','K8S_CLUSTER_NAME') }}"
 vcenter_username: "{{ lookup('env','VCENTER_USERNAME') }}"

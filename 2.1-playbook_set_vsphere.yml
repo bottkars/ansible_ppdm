@@ -38,7 +38,7 @@
       name: get_ppdm_host_certificate
     vars: 
       host: "{{ vcenter_fqdn }}"
-      port: "443"
+      port: 443
   - name: Accept VCenter Host Certificate for {{ vcenter_fqdn }}
     include_role:
       name: accept_ppdm_host_certificate  
@@ -78,7 +78,7 @@
         name: "{{ vcenter_fqdn }}"
         type: "VCENTER"
         address: "{{ vcenter_fqdn }}"
-        port: "443"
+        port: 443
         retries: 20
         delay: 60
         credentials: 

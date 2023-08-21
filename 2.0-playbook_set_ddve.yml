@@ -44,7 +44,7 @@
       name: get_ppdm_host_certificate
     vars: 
       host: "{{ ddve_fqdn }}"
-      port: "3009"
+      port: 3009
   - name: Accept Datadomain Host Certificate for {{ ddve_fqdn }}
     include_role:
       name: accept_ppdm_host_certificate  
