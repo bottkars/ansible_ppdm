@@ -148,7 +148,7 @@
     when: my_asset_setting is defined
   - name: Set Ansible Assets String 
     set_fact:
-      my_asset_setting: "{{ asset_setting.properties[0].value }}, KUBERNETES"
+      my_asset_setting: "{{ asset_setting.properties[0].value }},KUBERNETES"
     when: asset_setting.properties[0].value != "" and "KUBERNETES" not in asset_setting.properties[0].value
   - debug: 
       msg: "{{ my_asset_setting }}"
@@ -199,7 +199,7 @@
         details: "{{ details }}"
         credentials: 
             id: "{{ credentials.id }}"
-      retries: 
+      retries: 2
       delay: 30      
     include_role:
       name: add_ppdm_inventory
