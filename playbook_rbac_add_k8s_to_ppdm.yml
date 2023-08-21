@@ -106,6 +106,7 @@
         name: "ppdm-discovery-{{ k8s_fqdn }}"
         type: "KUBERNETES"        
         password: "{{ k8s_token }}"
+        username: "ppdm-discovery-{{ k8s_fqdn }}"
     include_role:
       name: create_ppdm_credentials    
   - name: Ensure K8S Cluster {{ k8s_fqdn }} in Inventory

@@ -52,9 +52,10 @@
     vars:
       data:
         method: "TOKEN" 
-        name: "ppdm-admin"
+        name: "ppdm-discovery-{{ k8s_fqdn }}"
         type: "KUBERNETES"        
         password: "{{ k8s_token }}"
+        username: "ppdm-discovery-{{ k8s_fqdn }}"
     include_role:
       name: create_ppdm_credentials
   - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
