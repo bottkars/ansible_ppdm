@@ -125,7 +125,7 @@
         name: "{{ k8s_fqdn }}"
         type: "KUBERNETES"
         address: "{{ k8s_fqdn }}"
-        port: "{{ k8s_port }} | int"
+        port: "{{ k8s_port  | int }} "
         details: "{{ details }}"
         credentials: 
             id: "{{ credentials.id }}"

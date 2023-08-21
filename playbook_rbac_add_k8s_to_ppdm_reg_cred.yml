@@ -166,8 +166,6 @@
           type: LIST
           value: "{{ my_asset_setting }}"
     when: my_asset_setting is defined
-
-
   - name: Get Kubernetes Host Certificate for {{ k8s_fqdn }}
     include_role:
       name: get_ppdm_host_certificate  
@@ -195,7 +193,7 @@
         name: "{{ k8s_fqdn }}"
         type: "KUBERNETES"
         address: "{{ k8s_fqdn }}"
-        port: "{{ k8s_port }} | int"
+        port: "{{ k8s_port  | int }}"
         details: "{{ details }}"
         credentials: 
             id: "{{ credentials.id }}"
