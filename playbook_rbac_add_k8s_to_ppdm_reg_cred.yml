@@ -131,6 +131,29 @@
       verbosity: 1
     name: do we have a token ?  
 
+  - name: get_ppdm_asset_setting
+    include_role:
+      name: get_ppdm_asset_setting
+  - debug: 
+      msg: "{{ asset_setting }}"
+      verbosity: 0     
+
+  - name: Set Ansible Assets String 
+    set_fact:
+      my_asset_setting: "KUBERNETES"
+    when: asset_setting.properties[0].value == ""
+  - debug: 
+      msg: "{{ my_asset_setting }}"
+      verbosity: 0    
+    when: my_asset_setting is defined
+  - name: Set Ansible Assets String 
+    set_fact:
+      my_asset_setting: "{{ asset_setting.properties[0].value }}, KUBERNETES"
+    when: asset_setting.properties[0].value != "" and "KUBERNETES" not in asset_setting.properties[0].value
+  - debug: 
+      msg: "{{ my_asset_setting }}"
+      verbosity: 0   
+    when: my_asset_setting is defined
 
   - name: enable Kubernetes Asset Source
     include_role: 
@@ -141,7 +164,8 @@
         properties:
         - name: enabledAssetTypes
           type: LIST
-          value: KUBERNETES
+          value: "{{ my_asset_setting }}"
+    when: my_asset_setting is defined
 
 
   - name: Get Kubernetes Host Certificate for {{ k8s_fqdn }}

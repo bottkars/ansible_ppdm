@@ -12,4 +12,4 @@
   register: result  
   when: not ansible_check_mode 
 - set_fact:
-    sdr_configuration: "{{ result.json }}"
+    asset_setting: "{{ result.json }}"
