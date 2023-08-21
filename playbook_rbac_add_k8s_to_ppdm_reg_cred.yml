@@ -191,7 +191,7 @@
     vars:
       data:
         name: "{{ k8s_fqdn }}"
-        type: "KUBERNETES"
+        type: KUBERNETES
         address: "{{ k8s_fqdn }}"
         port: "{{ k8s_port | int }}"
         details: "{{ details }}"
