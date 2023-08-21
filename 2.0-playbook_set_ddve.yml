@@ -75,13 +75,13 @@
       filter: type eq "EXTERNALDATADOMAIN" & orderby = name ASC & name eq "{{ ddve_fqdn }}"          
   - name: Add Datadomain to Inventory
     vars:
+      retries: 20
+      delay: 60
       data:
         name: "{{ ddve_fqdn }}"
         type: "EXTERNALDATADOMAIN"
         address: "{{ ddve_fqdn }}"
         port: 3009
-        retries: 20
-        delay: 60
         credentials: 
             id: "{{ credentials.id }}"
     include_role:
