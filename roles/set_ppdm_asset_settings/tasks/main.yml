@@ -1,6 +1,6 @@
 - name: Set PPDM ASSET Configuration
   uri:
-    method: POST
+    method: PUT
     url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/common-settings/ASSET_SETTING"
     body_format: json 
     body: "{{ data }}"
