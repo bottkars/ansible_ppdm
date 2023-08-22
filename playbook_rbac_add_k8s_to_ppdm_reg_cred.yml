@@ -195,7 +195,7 @@
         vendor: KUBERNETES
         address: "{{ k8s_fqdn }}"
         port: "{{ k8s_port | int }}"
-        details: "{{ details | default('') }}"
+        details: "{{ details | default('[]') }}"
         credentials: 
             id: "{{ credentials.id }}"
       retries: 2
