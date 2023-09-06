@@ -31,9 +31,9 @@
     validate_certs: false
   register: result 
   retries: 20 
-  delay:  30
+  delay:  20
   when: not ansible_check_mode 
-  until: result.json.validationDetails is defined and result.json.state == "AVAILABLE"
+  until: result.json.validationDetails is defined and ( result.json.state == "AVAILABLE"
 - set_fact:
     validation_details: "{{ result.json.validationDetails }}"   
 - debug:
