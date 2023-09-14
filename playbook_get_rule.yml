@@ -1,0 +1,48 @@
+# Example Playbok to Add Kubernetes Cluster to PPDM
+- name: Add K8S to PPDM
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  vars:  
+    k8s_policy_name: K8S_Protection 3hrs 3days    
+  tasks:
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have a ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Checking Required Variable ddve_fqdn
+    fail: 
+      msg: "We do not have ddve_fqdn  set !"
+    when: (ddve_fqdn is not defined) or (ddve_fqdn|length == 0)  
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+
+  - name: Get Protection rule with filter
+    vars:
+      filter: 'name eq "Kubernetes Namespace Label Rule {{ ppdm_rule }}"'
+#      filter: 'name eq "Kubernetes Namespace Label Rule ppdm_policy=PPDM_GOLD"'
+    include_role:
+      name: get_ppdm_protection_rules
+  - debug: 
+      msg: "{{ protection_rule }}"
+      verbosity: 0    
+
+
+
+# https://ppdm-demo.home.labbuildr.com:8443/api/v2/protection-rules?filter=name%20eq%20%22Kubernetes%20Namespace%20Label%20Rule%20ppdm_policy%3Dcsi_demo%22
+# https://ppdm-demo.home.labbuildr.com:8443/api/v2/protection-rules?filter=name%20eq%20%22Kubernetes%20Namespace%20Label%20Rule%20ppdm_policy%3DPPDM_GOLD%22

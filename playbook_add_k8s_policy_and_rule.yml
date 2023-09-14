@@ -31,15 +31,28 @@
       msg: "{{ access_token }}"
       verbosity: 1
     name: do we have a token ?  
+  - name: Get Protection Policy with filter
+    vars:
+      filter: 'name eq "{{ k8s_policy_name }}"'
+    include_role:
+      name: get_ppdm_protection_policy
+  - set_fact:
+      protection_policy: "{{ protection_policy[0] }}" 
+    when: protection_policy[0] is defined
+  - debug: 
+      msg: "{{ protection_policy }}"
+      verbosity: 0 
+
   - name: Get DataDomain Storage Systems
     include_role: 
       name: get_ppdm_storage-systems
     vars:
       filter: type eq "DATA_DOMAIN_SYSTEM" & orderby = name ASC & name eq "{{ ddve_fqdn }}" 
+    when: protection_policy.id is not defined
 
   - name: Create New Protection Policy
     vars:
-      protection_policy:
+      new_protection_policy:
         id: 
         name: "{{ k8s_policy_name }}"
         description: 'This is a GTO Demo Kubernetes Protection Policy'
@@ -56,14 +69,6 @@
         dataConsistency: CRASH_CONSISTENT
         complianceInterval:
         details:
-        summary:
-          numberOfAssets: 0
-          totalAssetCapacity: 0
-          totalAssetProtectionCapacity: 0
-          numberOfJobFailures: 0
-          numberOfSlaFailures: 0
-          numberOfSlaSuccess: 0
-          lastExecutionStatus: IDLE
         stages:
         - id: "{{ 1000 | random | to_uuid | upper }}" #99227db6-8bfc-38e1-d333-f63d740d2880
           type: PROTECTION
@@ -81,7 +86,7 @@
               backupType: SYNTHETIC_FULL
           target:
             storageSystemId: "{{ storagesystems[0].id }}"
-            preferredInterface: "{{ storagesystems[0].details.dataDomain.preferredInterfaces[0].networkAddress }}"
+            preferredInterfaceId: "{{ storagesystems[0].details.dataDomain.preferredInterfaces[1].networkName }}"
           attributes:
             protection: {}
           operations:
@@ -95,10 +100,27 @@
         filterIds: []
     include_role:
       name: new_ppdm_protection_policy
-    when: storagesystems[0].id is defined
+    when: protection_policy.id is not defined and (storagesystems[0] is defined)
+
   - debug: 
       msg: "{{ protection_policy }}"
+      verbosity: 0
+    when: protection_policy is defined #and (protection_policy.id is not defined)
+
+  - name: Get Protection rule with filter
+    vars:
+      filter: 'name eq "Kubernetes Namespace Label Rule {{ ppdm_rule }}"'
+#      filter: 'name eq "Kubernetes Namespace Label Rule ppdm_policy=PPDM_GOLD"'
+    include_role:
+      name: get_ppdm_protection_rules
+    when:   protection_policy.id is defined
+  - set_fact:
+      protection_rule: "{{ protection_rule[0] }}"
+    when: protection_rule[0] is defined         
+  - debug: 
+      msg: "{{ protection_rule }}"
       verbosity: 0    
+
   - name: Create New Protection Rule
     vars:
       protection_rule:
@@ -134,11 +156,11 @@
           id: 00000000-0000-4000-a000-000000000000
     include_role:
       name: new_ppdm_protection_rule
-    when: protection_policy.id is defined
+    when: protection_policy.id is defined and protection_rule.id is not defined
   - debug: 
       msg: "{{ protection_rule }}"
       verbosity: 0    
-
+#    when: protection_policy.id is defined or (protection_rule is not defined and protection_policy[0].id is defined )
   - name: Run Protection Rule
     vars:
       inventorySourceType: "{{ protection_rule.inventorySourceType }}"
@@ -148,5 +170,5 @@
   - debug: 
       msg: "{{ protection_rule_run }}"
       verbosity: 0
-
+    when: protection_rule.inventorySourceType is defined
 

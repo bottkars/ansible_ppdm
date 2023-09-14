@@ -9,7 +9,7 @@
 - name: Rewrite uri with filter
   set_fact: 
     uri: "{{ uri }}?filter={{ filter | urlencode }}"  
-- name: Get PPDM storage-systems with status {{ condition }}
+- name: Get PPDM storage-systems with status
   uri:
     method: GET
     url: "{{ uri }}"
@@ -20,7 +20,7 @@
     status_code: 200,500
     validate_certs: false
   register: result
-  until: "{{ condition }}"    
+#  until: "{{ condition }}"    
   retries: "{{ retries }}"
   delay: "{{ delay }}"
   when: not ansible_check_mode 

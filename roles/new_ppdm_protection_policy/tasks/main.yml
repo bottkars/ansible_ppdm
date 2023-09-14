@@ -6,7 +6,7 @@
     method: POST
     url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/protection-policies"
     body_format: json
-    body: "{{ protection_policy }}"
+    body: "{{ new_protection_policy }}"
     headers:
       accept: application/json
       authorization: "Bearer {{ access_token }}"    
@@ -16,3 +16,4 @@
   when: not ansible_check_mode 
 - set_fact:
     protection_policy: "{{ result.json }}"
+  when: result.json is defined
