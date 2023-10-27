@@ -111,7 +111,6 @@
   - name: "Ensure K8S Credentials ppdm-discovery-{{ k8s_fqdn }}"
     vars:
       data:
-        details: "{{ details }}"
         method: "TOKEN" 
         name: "ppdm-discovery-{{ k8s_fqdn }}"
         type: "KUBERNETES"        
