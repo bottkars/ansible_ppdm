@@ -116,7 +116,7 @@
     when:   protection_policy.id is defined
   - set_fact:
       protection_rule: "{{ protection_rule[0] }}"
-    when: protection_rule[0] is defined         
+    when: protection_rule[0].id is defined         
   - debug: 
       msg: "{{ protection_rule }}"
       verbosity: 0    
