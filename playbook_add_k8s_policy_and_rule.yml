@@ -86,7 +86,7 @@
               backupType: SYNTHETIC_FULL
           target:
             storageSystemId: "{{ storagesystems[0].id }}"
-            preferredInterfaceId: "{{ storagesystems[0].details.dataDomain.preferredInterfaces[1].networkName }}"
+            preferredInterfaceId: "{{ storagesystems[0].details.dataDomain.preferredInterfaces[0].networkName }}"
           attributes:
             protection: {}
           operations:
