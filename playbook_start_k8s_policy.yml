@@ -53,7 +53,7 @@
             backupType: FULL
     include_role:
       name: run_ppdm_protection_policy
-    when: protection_policy.id is defined
+    when: protection_policy[0].id is defined
   - debug: 
       msg: "{{ protection_policy_run }}"
       verbosity: 0   
