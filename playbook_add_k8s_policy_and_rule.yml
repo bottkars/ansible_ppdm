@@ -156,7 +156,7 @@
           id: 00000000-0000-4000-a000-000000000000
     include_role:
       name: new_ppdm_protection_rule
-    when: protection_policy.id is defined and protection_rule.id not defined
+    when: (protection_policy.id is defined) and (protection_rule.id is not defined)
   - debug: 
       msg: "{{ protection_rule }}"
       verbosity: 0    
