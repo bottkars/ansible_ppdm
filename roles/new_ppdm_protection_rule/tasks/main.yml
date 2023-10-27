@@ -6,7 +6,7 @@
     method: POST
     url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/protection-rules"
     body_format: json
-    body: "{{ protection_rule }}"
+    body: "{{ new_protection_rule }}"
     headers:
       accept: application/json
       authorization: "Bearer {{ access_token }}"    

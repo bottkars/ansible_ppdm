@@ -123,7 +123,7 @@
 
   - name: Create New Protection Rule
     vars:
-      protection_rule:
+      new_protection_rule:
         name: Kubernetes Namespace Label Rule {{ ppdm_rule }}
         category: COMPOUND
         rules:
@@ -156,7 +156,7 @@
           id: 00000000-0000-4000-a000-000000000000
     include_role:
       name: new_ppdm_protection_rule
-    when: protection_policy.id is defined and protection_rule[0].id is not defined
+    when: protection_policy.id is defined and protection_rule.id is not defined
   - debug: 
       msg: "{{ protection_rule }}"
       verbosity: 0    
