@@ -41,11 +41,11 @@
 
   - name: Run Protection Policy
     vars:
-      policy_id: "{{ protection_policy.id }}"
+      policy_id: "{{ protection_policy[0].id }}"
       backup:
         assetIds:
         stages:
-        - id: "{{ protection_policy.stages[0].id }}"
+        - id: "{{ protection_policy[0].stages[0].id }}"
           retention: 
             interval: 3
             unit: DAY
