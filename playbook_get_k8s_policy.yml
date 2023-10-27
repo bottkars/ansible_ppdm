@@ -37,10 +37,11 @@
       filter: 'name eq "{{ k8s_policy_name }}"'
     include_role:
       name: get_ppdm_protection_policy
-    when: storagesystems[0].id is defined
   - debug: 
       msg: "{{ protection_policy }}"
-      verbosity: 0    
+      verbosity: 0   
+    when: protection_policy is defined
+
 
 
 
