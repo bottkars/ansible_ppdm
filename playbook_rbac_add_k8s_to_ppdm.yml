@@ -89,7 +89,7 @@
     name: do we have a token ?  
   - name: enable Kubernetes Asset Source
     include_role: 
-      name: set_ppdm_asset_settings
+      name: set_ppdm_asset_setting
     vars: 
       data:
         id: ASSET_SETTING
