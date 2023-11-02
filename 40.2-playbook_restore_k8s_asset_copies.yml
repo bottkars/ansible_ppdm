@@ -60,7 +60,7 @@
         copy: "{{ copies[0] }}"
         asset: "{{ assets[0] }}"
         message: "{{ ticket_reason | default('') }}"
-        target_namespace: "{{ target_namespace }}"   
+        target_namespace: "{{ target_namespace_name }}"   
   - name: Restore Result
     debug: 
       msg: "{{ restore }}"
