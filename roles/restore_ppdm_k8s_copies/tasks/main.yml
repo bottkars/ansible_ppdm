@@ -1,0 +1,42 @@
+- name: Define Uri
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/restored-copies"
+- name: Rewrite uri with filter
+  set_fact: 
+    uri: "{{ uri }}?filter={{ filter | urlencode }}"
+  when: filter  | default('', true) | trim != ''
+
+- name: restore asset copies to a namespace
+  uri:
+    method: POST
+    url: "{{ uri }}"
+    body_format: json
+    body:
+      description: "Restore K8S {{ asset.name }} from copy id {{ copy.id }} at {{ copy.createTime }} to {{ target_namespace }}{{ message }}"
+      restoreType: TO_ALTERNATE
+      copyIds:
+        - "{{ copy.id }}"
+      restoredCopiesDetails:
+        targetK8sInfo:
+          namespace: {{ target_namespace }}
+          skipNamespaceResources: false
+          targetInventorySourceId: {{ asset.detail.k8s.InventorySourceId }}
+          persistentVolumeClaims: {{ copy.details.k8sBackup.persistentVolumeClaims }}
+          overwritePersistentVolumeClaim: true
+      options:
+        includeClusterResources: false
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 201,200,500
+    validate_certs: false
+  register: result
+  until: "{{ condition }}"    
+  retries: "{{ retries }}"
+  delay: "{{ delay }}"
+  when: not ansible_check_mode 
+- set_fact:
+    restore: "{{ result.json }}"
+- debug:
+    msg: "{{ restore }}"
+    verbosity: 1    

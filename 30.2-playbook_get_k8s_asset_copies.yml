@@ -1,0 +1,52 @@
+# Example Playbook to configure query PPDM Server Disaster Recovery
+- name: Get k8s Copies
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Checking Required Variable ppdm_fqdn
+    fail: 
+      msg: "We do not have ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variable ppdm_new_password
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Checking Required Variable namespace_name
+    fail: 
+      msg: "We do not have the namespace_name set !"
+    when: (namespace_name is not defined) or (namespace_name|length <= 3)  
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"     
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get PPDM Assets
+    include_role: 
+      name: get_ppdm_assets
+    vars:
+        #filter: details.k8s.namespace in ("mysql", "mysql-rh", "openshift-image-registry", "powerstore", "scale002", "testpowerstore") and subtype eq "K8S_PERSISTENT_VOLUME_CLAIM"
+        filter: name eq "{{ namespace_name }}" and type eq "KUBERNETES" and subtype eq "K8S_NAMESPACE" and lastAvailableCopyTime ne null
+        #filter: type eq "KUBERNETES" and protectionStatus eq "PROTECTED" and details.k8s.namespac eq "{{ namespace_name }}"
+  - name: Assets Result
+    debug: 
+      msg: "{{ assets }}"
+      verbosity: 0 
+  - name: Get PPDM Assetcopies
+    include_role: 
+      name: get_ppdm_assetcopies
+    vars:
+        id: "{{ assets[0].id }}" 
+  - name: Copies Result
+    debug: 
+      msg: "{{ copies[0] }}"
+      verbosity: 0         
+
