@@ -1,0 +1,17 @@
+
+
+
+restoreType: TO_ALTERNATE
+copyIds:
+- 92d062e0-088a-539e-a182-608061d374ec
+description: 'Restore namespace to New: Restoring copy to new namespace "demo-as-123"'
+restoredCopiesDetails:
+  targetK8sInfo:
+    namespace: demo-as-1234
+    skipNamespaceResources: false
+    targetInventorySourceId: 326824d4-e60c-41c3-9967-ba73303a5369
+    persistentVolumeClaims:
+    - name: pvc-gtopopup
+    overwritePersistentVolumeClaim: true
+options:
+  includeClusterResources: false
