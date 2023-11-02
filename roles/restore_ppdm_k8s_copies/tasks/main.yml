@@ -20,7 +20,7 @@
         targetK8sInfo:
           namespace: "{{ target_namespace }}"
           skipNamespaceResources: false
-          targetInventorySourceId: "{{ asset.detail.k8s.InventorySourceId }}"
+          targetInventorySourceId: "{{ asset.details.k8s.InventorySourceId }}"
           persistentVolumeClaims: "{{ copy.details.k8sBackup.persistentVolumeClaims }}"
           overwritePersistentVolumeClaim: true
       options:
