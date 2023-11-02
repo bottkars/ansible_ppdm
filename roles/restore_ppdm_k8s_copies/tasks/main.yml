@@ -18,10 +18,10 @@
         - "{{ copy.id }}"
       restoredCopiesDetails:
         targetK8sInfo:
-          namespace: {{ target_namespace }}
+          namespace: "{{ target_namespace }}"
           skipNamespaceResources: false
-          targetInventorySourceId: {{ asset.detail.k8s.InventorySourceId }}
-          persistentVolumeClaims: {{ copy.details.k8sBackup.persistentVolumeClaims }}
+          targetInventorySourceId: "{{ asset.detail.k8s.InventorySourceId }}"
+          persistentVolumeClaims: "{{ copy.details.k8sBackup.persistentVolumeClaims }}"
           overwritePersistentVolumeClaim: true
       options:
         includeClusterResources: false
