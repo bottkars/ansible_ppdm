@@ -53,7 +53,6 @@
       msg: "{{ copies[0] }}"
       verbosity: 0         
 
-
   - name: Restore K8S Assetcopies
     include_role: 
       name: restore_ppdm_k8s_copies
@@ -61,7 +60,7 @@
         copy: "{{ copies[0] }}"
         asset: "{{ assets[0] }}"
         message: "{{ ticket_reason | default('') }}"
-        target_namespace "{{ target_namespace }}"   
+        target_namespace: "{{ target_namespace }}"   
   - name: Restore Result
     debug: 
       msg: "{{ restore }}"
