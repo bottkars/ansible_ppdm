@@ -12,7 +12,7 @@
     url: "{{ uri }}"
     body_format: json
     body:
-      description: "{{ restore_type }} K8S {{ asset.name }} from copy id {{ copy.id }}, created {{ copy.createTime }} to {{ target_namespace }} {{ message }}"
+      description: "Restore Namespace {{ asset.name }} {{ restore_type }} {{ target_namespace }} from copy id {{ copy.id }}, created {{ copy.createTime }} {{ message }}"
       restoreType: "{{ restore_type }}"
       copyIds:
         - "{{ copy.id }}"
