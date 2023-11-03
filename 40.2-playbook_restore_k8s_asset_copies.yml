@@ -7,7 +7,7 @@
   - name: Checking Restore Type
     fail: 
       msg: "var restore_type must be of TO_EXISTING or TO_ALTERNATE"
-    when: (restore_type != "TO_EXISTING") or (restore_type != "TO_ALTERNATE")
+    when: (restore_type != TO_EXISTING ) or (restore_type != TO_ALTERNATE)
   - name: Checking Required Variable ppdm_fqdn
     fail: 
       msg: "We do not have ppdm fqdn set !"
