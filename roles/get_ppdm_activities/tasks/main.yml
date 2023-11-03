@@ -28,6 +28,10 @@
   when: not ansible_check_mode 
 - set_fact:
     activities: "{{ result.json.content }}"
+  when: result.json.content is defined
+- set_fact:
+    activities: "{{ result.json }}"
+  when: id is defined and result.json is defined     
 - debug:
     msg: "{{ activities }}"
-    verbosity: 1    
+    verbosity: 0    
