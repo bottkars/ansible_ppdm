@@ -72,5 +72,5 @@
       id: restore.activityId
       wait: 30
       retries: 30
-      condition: result.json.status == "COMPLETED"
+      condition: result.status == "COMPLETED"
     when: wait_activity is defined and restore is defined  
