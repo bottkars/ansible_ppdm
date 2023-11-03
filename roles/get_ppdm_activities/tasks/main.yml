@@ -30,4 +30,4 @@
     activities: "{{ result.json.content }}"
 - debug:
     msg: "{{ activities }}"
-    verbosity: 1    
+    verbosity: 0    
