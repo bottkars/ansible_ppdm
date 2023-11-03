@@ -24,6 +24,7 @@
       name: get_ppdm_activities
     vars:
         filter:  "{{ lookup('env','filter')| default('') }}"
+        id: " {{ activity_id | default('') }}
   - name: Assets Result
     debug: 
       msg: "{{ activities }}"
