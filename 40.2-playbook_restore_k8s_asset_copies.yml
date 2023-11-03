@@ -69,7 +69,7 @@
     include_role:
       name: get_ppdm_activities
     vars:
-      id: {{ restore.activityId }}
+      id: "{{ restore.activityId }}"
       delay: 30
       retries: 30
       condition: result.json.state == "COMPLETED" or result.json.state == "FAILED"
