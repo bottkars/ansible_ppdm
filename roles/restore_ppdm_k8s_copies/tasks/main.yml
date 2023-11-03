@@ -13,7 +13,7 @@
     body_format: json
     body:
       description: "Restore Namespace {{ asset.name }} {{ restore_type }} {{ target_namespace }} from copy id {{ copy.id }}, created {{ copy.createTime }} {{ message }}"
-      restoreType: "{{ restore_type }}"
+      restoreType: "{{ restoreType }}"
       copyIds:
         - "{{ copy.id }}"
       restoredCopiesDetails:

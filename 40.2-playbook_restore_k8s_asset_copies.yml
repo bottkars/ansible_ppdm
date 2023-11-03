@@ -65,7 +65,7 @@
         asset: "{{ assets[0] }}"
         message: "{{ ticket_reason | default('') }}"
         target_namespace: "{{ target_namespace_name }}"
-        restore_type: "{{ restore_type | default('TO_ALTERNATE') }}"     
+        restoreType: "{{ restore_type | default('TO_ALTERNATE') }}"     
   - name: Restore Result
     debug: 
       msg: "{{ restore }}"
