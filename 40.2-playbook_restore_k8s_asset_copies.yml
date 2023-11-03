@@ -60,9 +60,17 @@
         copy: "{{ copies[0] }}"
         asset: "{{ assets[0] }}"
         message: "{{ ticket_reason | default('') }}"
-        target_namespace: "{{ target_namespace_name }}"   
+        target_namespace: "{{ target_namespace_name }}"          
   - name: Restore Result
     debug: 
       msg: "{{ restore }}"
       verbosity: 0                    
-
+  - name: Wait Restore complete
+    ansible.builtin.include_role:
+      name: get_ppdm_activities
+    vars:
+      id: restore.activityId
+      wait: 30
+      retries: 30
+      condition: result.json.condition == "COMPLETED"
+    when: wait_activity is defined and restore is defined  
