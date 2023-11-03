@@ -13,7 +13,7 @@
     body_format: json
     body:
       description: "Restore K8S {{ asset.name }} from copy id {{ copy.id }} at {{ copy.createTime }} to {{ target_namespace }} {{ message }}"
-      restoreType: TO_ALTERNATE
+      restoreType: "{{ restore_type }}"
       copyIds:
         - "{{ copy.id }}"
       restoredCopiesDetails:

@@ -4,6 +4,10 @@
   vars_files: 
     - ./vars/main.yml
   tasks:
+  - name: Checking Restore Type
+    fail: 
+      msg: "var restore_type must be of TO_EXISTING or TO_ALTERNATE"
+    when: (restore_type != "TO_EXISTING") or (restore_type != "TO_ALTERNATE")
   - name: Checking Required Variable ppdm_fqdn
     fail: 
       msg: "We do not have ppdm fqdn set !"
@@ -60,7 +64,8 @@
         copy: "{{ copies[0] }}"
         asset: "{{ assets[0] }}"
         message: "{{ ticket_reason | default('') }}"
-        target_namespace: "{{ target_namespace_name }}"          
+        target_namespace: "{{ target_namespace_name }}"
+        restore_type: "{{ restore_type }}"     
   - name: Restore Result
     debug: 
       msg: "{{ restore }}"
