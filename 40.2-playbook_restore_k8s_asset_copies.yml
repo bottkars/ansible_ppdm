@@ -72,7 +72,7 @@
       id: restore.activityId
       delay: 30
       retries: 30
-      condition: activities.state == "COMPLETED" or activities.state == "FAILED"
+      condition: result.state == "COMPLETED" or result.state == "FAILED"
     when: wait_activity is defined and restore is defined  
   - name: Result
     debug: 
