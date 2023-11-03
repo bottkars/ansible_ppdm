@@ -66,11 +66,16 @@
       msg: "{{ restore }}"
       verbosity: 0                    
   - name: Wait Restore complete
-    ansible.builtin.include_role:
+    include_role:
       name: get_ppdm_activities
     vars:
       id: restore.activityId
-      wait: 30
+      delay: 30
       retries: 30
-      condition: result.status == "COMPLETED"
+      condition: result.status == "COMPLETED" or result.status == "FAILED"
     when: wait_activity is defined and restore is defined  
+  - name: Result
+    debug: 
+      msg: "{{ activities }}"
+      verbosity: 0 
+    when: activities is defined       
