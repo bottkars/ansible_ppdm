@@ -1,0 +1,78 @@
+# Example Playbok to Add DDVE to PPDM
+- name: Add CSM to PPDM
+  hosts: localhost
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  tasks:
+  - name: Checking Required Variable ppdm_fqdn
+    fail: 
+      msg: "We do not have ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variable ppdm_new_password
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Checking Required Variable csm_credentials
+    fail: 
+      msg: "We do not have csm_credentials  set !"
+    when: (csm_credentials is not defined) or (csm_credentials|length == 0)          
+  - name: Checking Required Variable csm_tenant
+    fail: 
+      msg: "We do not have csm_tenant  set !"
+    when: (csm_tenant is not defined) or (csm_tenant|length == 0)  
+  
+  
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get CSM Credentials from PPDM
+    vars:
+      filter: name eq "{{ csm_tenant }}" and type eq "CLOUD_SNAPSHOT_MANAGER"
+    include_role:
+      name: get_ppdm_credentials
+  - set_fact:
+     credentials: "{{ credentials[0] }}"
+    when: credentials[0].id is defined                     
+  - name: Create CLOUD_SNAPSHOT_MANAGER Credentials
+    vars:
+      data: 
+        type: "CLOUD_SNAPSHOT_MANAGER"
+        name: "{{ csm_tenant }}"
+        username: "{{ csm_tenant }}"
+        password: "{{ csm_credentials }}"
+    include_role:
+      name: create_ppdm_credentials 
+    when: credentials.id is not defined
+  - name: Get CLOUD_SNAPSHOT_MANAGER Inventory Sources
+    include_role: 
+      name: get_ppdm_inventory-sources
+    vars:
+      filter: type eq "CLOUD_SNAPSHOT_MANAGER" & orderby = name ASC & name eq "CLOUD_SNAPSHOT_MANAGER"          
+  - name: Add CLOUD_SNAPSHOT_MANAGER to Inventory
+    vars:
+      filterstring: type eq "CLOUD_SNAPSHOT_MANAGER" & orderby = name ASC & name eq "CLOUD_SNAPSHOT_MANAGER"
+      retries: 3
+      delay: 60
+      data:
+        name: "CLOUD_SNAPSHOT_MANAGER"
+        type: "CLOUD_SNAPSHOT_MANAGER"
+        externalTenant:
+          id: "{{ csm_tenant }}"
+        credentials: 
+          id: "{{ credentials.id }}"
+    include_role:
+      name: add_ppdm_inventory
+    when: inventorysources[0].id is not defined
+
+
+     
