@@ -56,7 +56,7 @@
       data:
         id: "{{ smtp_configuration[0].id }}"
         mailServer: "{{ ppdm_smtp_mailServer }}"
-        port: "{{ ppdm_smtp_port }}"
+        port: "{{ ppdm_smtp_port | int }}"
         mailFrom: "{{ ppdm_smtp_mailFrom }}"
     when: smtp_configuration[0].id is defined 
                 
