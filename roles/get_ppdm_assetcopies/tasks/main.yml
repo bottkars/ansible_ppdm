@@ -3,7 +3,7 @@
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/assets/{{ id }}/copies"
 - name: Rewrite uri with filter
   set_fact: 
-    uri: "{{ uri }}?filter={{ filter | urlencode }}"
+    uri: "{{ uri }}?filter={{ filter | string | urlencode }}"
   when: filter  | default('', true) | trim != ''
 
 - name: Get PPDM assetcopies with status {{ condition }}
