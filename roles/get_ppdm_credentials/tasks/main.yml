@@ -8,7 +8,7 @@
   when: id  | default('', false) | trim == ''
 - name: Rewrite uri with filter
   set_fact: 
-    uri: "{{ uri }}?filter={{ filter | urlencode }}" 
+    uri: "{{ uri }}?filter={{ filter | string | urlencode }}" 
   when: filter   
 - name: Get PPDM Credentials with filter {{ filter }}
   uri:
