@@ -48,7 +48,8 @@
   # apply
     kubernetes.core.k8s:
 #      verify_ssl: no
-      state: present      
+      state: present 
+      force: true     
       definition:
         apiVersion: v1
         kind: Secret
@@ -75,6 +76,7 @@
     kubernetes.core.k8s:
 #      verify_ssl: no
       state: present
+      force: true
       definition:
         apiVersion: v1
         data:
@@ -97,6 +99,7 @@
     kubernetes.core.k8s:
 #      verify_ssl: no
       state: present
+      force: true
       definition:
         apiVersion: v1
         data:

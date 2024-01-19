@@ -98,6 +98,7 @@
     kubernetes.core.k8s:
 #      verify_ssl: no
       state: present
+      force: true
       definition:
         apiVersion: v1
         data:
