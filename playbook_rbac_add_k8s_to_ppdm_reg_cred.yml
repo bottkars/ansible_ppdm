@@ -71,6 +71,20 @@
   - debug: 
       msg: "{{ k8s_fqdn }} {{ k8s_name }} {{ k8s_port }}"
       verbosity: 1
+  - name: remove registry secrets in powerprotect namespace
+    kubernetes.core.k8s:
+#      verify_ssl: no
+      state: absent
+      force: true
+      definition:
+        apiVersion: v1
+        data:
+          .dockerconfigjson: "{{ dockerconfigjson }}"
+        kind: Secret
+        metadata:
+          name: regcred
+          namespace: powerprotect
+        type: kubernetes.io/dockerconfigjson         
   - name: ensure registry secrets in powerprotect namespace
     kubernetes.core.k8s:
 #      verify_ssl: no
@@ -94,6 +108,19 @@
         kind: Namespace
         metadata:
           name: velero-ppdm
+  - name: remove registry secrets in velero-ppdm namespace
+    kubernetes.core.k8s:
+#      verify_ssl: no
+      state: present
+      definition:
+        apiVersion: v1
+        data:
+          .dockerconfigjson: "{{ dockerconfigjson }}"
+        kind: Secret
+        metadata:
+          name: regcred
+          namespace: velero-ppdm
+        type: kubernetes.io/dockerconfigjson          
   - name: ensure registry secrets in velero-ppdm namespace
     kubernetes.core.k8s:
 #      verify_ssl: no
