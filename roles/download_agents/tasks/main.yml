@@ -1,0 +1,12 @@
+- name: Download Agent Files
+  get_url:
+    url: "{{ ppdm_baseurl }}/agent-download?filename={{ agent_filename }}" 
+    headers:
+      authorization: "Bearer {{ access_token }}"  
+    dest: /tmp    
+    validate_certs: false
+    mode: 01777
+    force: yes
+  when: not ansible_check_mode 
+- set_fact:
+    download_result: "{{ result }}"

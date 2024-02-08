@@ -1,0 +1,4 @@
+ppdm_api_ver: /api/v2
+ppdm_username: admin
+ppdm_port: 8443
+agent_filename: 19.15-69/Windows/FS/fsagent1915_win_x64.zip

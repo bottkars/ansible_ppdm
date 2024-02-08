@@ -1,6 +1,7 @@
 # Example Playbok to deploy agentzs
 - name: Add DDVE to PPDM
-  hosts: file
+  hosts: localhost
+  connection: local
   vars_files: 
     - ./vars/main.yml
   tasks:
@@ -26,8 +27,10 @@
       verbosity: 1
     name: do we have a token ?  
 
-               
-
-
+  - name: Download Agents
+    vars:
+      agemt_filename: 19.15-69/Windows/FS/fsagent1915_win_x64.zip
+    include_role:
+      name: download_agents
 
      
