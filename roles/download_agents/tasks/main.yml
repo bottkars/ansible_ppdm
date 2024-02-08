@@ -1,9 +1,13 @@
-- name: Download Agent Files
+- name: "Ensure directory {{ agent_destination }}/{{ agent_filename | dirname }}"
+  ansible.builtin.file:
+    path: "{{ agent_destination }}/{{ agent_filename | dirname }}"
+    state: directory
+- name: "Download Agent {{ agent_filename }}" 
   get_url:
     url: "{{ ppdm_baseurl }}/agent-download?filename={{ agent_filename }}" 
     headers:
       authorization: "Bearer {{ access_token }}"  
-    dest: /tmp    
+    dest: "{{ agent_destination }}/{{ agent_filename | dirname }}"  
     validate_certs: false
     mode: 01777
     force: yes

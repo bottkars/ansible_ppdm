@@ -27,10 +27,31 @@
       verbosity: 1
     name: do we have a token ?  
 
-  - name: Download Agents
+  - name: Download FS Agents Windows
     vars:
-      agemt_filename: 19.15-69/Windows/FS/fsagent1915_win_x64.zip
+      agent_filename: "{{ fs_agent_windows }}"
     include_role:
       name: download_agents
+  - name: Download FS Agents Linux
+    vars:
+      agent_filename: "{{ fs_agent_linux }}"
+    include_role:
+      name: download_agents      
+  - name: Download MSApps Agents Windows
+    vars:
+      agent_filename: "{{ msapp_agent_windows }}"
+    include_role:
+      name: download_agents
+  - name: Download Oracle Agents Linux
+    vars:
+      agent_filename: "{{ ora_agent_linux }}"
+    include_role:
+      name: download_agents
+  - name: Download SAP Hana Agents Linux
+    vars:
+      agent_filename: "{{ dbapp_agent_linux }}"
+    include_role:
+      name: download_agents      
+          
 
      
