@@ -9,6 +9,6 @@
    agent_branch: "19.15-69"  
    agent_src: /tmp
 - name: Copy agent
-  ansible.windows.win_copy:
-    src: "{{ agent_src }}/{{ app_agent }}"
-    dest: C:\Temp\
+    ansible.windows.win_copy:
+      src: "{{ agent_src }}/{{ app_agent }}"
+      dest: C:\Temp\
