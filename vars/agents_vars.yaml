@@ -1,5 +1,3 @@
-agent_ver: "1915"
-agent_branch: "19.15-69"
 fs_agent_windows: "{{ agent_branch }}/Windows/FS/fsagent{{ agent_ver }}_win_x64.zip"
 fs_agent_linux: "{{ agent_branch }}/Linux/FS/fsagent{{ agent_ver }}_linux_x86_64.tar.gz"
 msapp_agent_windows: "{{ agent_branch }}/Windows/MSApp/msappagent{{ agent_ver }}_win_x64.zip"
