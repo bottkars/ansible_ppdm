@@ -30,7 +30,7 @@
   - name: "Install {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
     ansible.windows.win_package:
       path: "{{ find_file.files[0].path }}"
-#      product_id: '{CF2BEA3C-26EA-32F8-AA9B-331F7E34BA97}'
+      product_id: '{36B717FB-E5C5-42AE-B715-484859287A7F}'
       arguments:
       - /s
       - PPDMHostName={{ ppdm_fqdn }}
