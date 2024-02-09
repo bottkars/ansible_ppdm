@@ -12,10 +12,10 @@
   - name: Copy agent
     ansible.windows.win_copy:
       src: "{{ agent_src }}/{{ app_agent }}"
-      dest: C:/Temp/{{ app_agent }}
+      dest: C:/Temp
   - name: Unzip Agents
     community.windows.win_unzip:
-      src: C:/Temp/{{ app_agent }}
+      src: C:/Temp/{{ app_agent | filename }}
       dest: C:/swdist
       recurse: yes
       delete_archive: yes      
