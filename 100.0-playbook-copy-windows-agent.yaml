@@ -21,9 +21,9 @@
     community.windows.win_unzip:
       src: "C:/Temp/{{ app_agent | basename }}"
       dest: "C:/swdist"
-  - name: Install App Agent 
+  - name: Install App Agent
     ansible.windows.win_package:
-    path: "C:/swdist/nt64/{{ app_agent | basename | splitext | first }}.exe"
+    path: C:/swdist/nt64/"{{ app_agent | basename | splitext | first }}".exe
 #    product_id: '{CF2BEA3C-26EA-32F8-AA9B-331F7E34BA97}'
     arguments:
     - /s
