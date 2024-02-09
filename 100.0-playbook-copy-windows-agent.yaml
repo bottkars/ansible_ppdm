@@ -16,6 +16,4 @@
   - name: Unzip Agents
     community.windows.win_unzip:
       src: "C:/Temp/{{ app_agent | basename }}"
-      dest: C:/swdist
-      recurse: yes
-      delete_archive: yes      
+      dest: C:/swdist    
