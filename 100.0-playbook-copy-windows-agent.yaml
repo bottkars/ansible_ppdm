@@ -9,11 +9,11 @@
    agent_branch: "19.15-69"  
    agent_src: /tmp
   tasks: 
-  - name: Copy agent
+  - name: Copy agent to {{ ansible_fqdn }}
     ansible.windows.win_copy:
       src: "{{ agent_src }}/{{ app_agent }}"
       dest: C:/Temp
   - name: Unzip Agents
     community.windows.win_unzip:
       src: "C:/Temp/{{ app_agent | basename }}"
-      dest: C:/swdist    
+      dest: C:/swdist
