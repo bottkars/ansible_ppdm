@@ -16,15 +16,15 @@
   - name: Copy agent to {{ ansible_fqdn }}
     ansible.windows.win_copy:
       src: "{{ agent_src }}/{{ app_agent }}"
-      dest: C:/Temp
+      dest: "C:/Temp"
   - name: Unzip Agents
     community.windows.win_unzip:
       src: "C:/Temp/{{ app_agent | basename }}"
       dest: "C:/swdist"
-  - name: Install {{ app_agent }} on {{ ansible_fqdn }}
+  - name: Install App Agent 
     ansible.windows.win_package:
     path: "C:/swdist/nt64/{{ app_agent | basename | splitext | first }}.exe"
-    product_id: '{CF2BEA3C-26EA-32F8-AA9B-331F7E34BA97}'
+#    product_id: '{CF2BEA3C-26EA-32F8-AA9B-331F7E34BA97}'
     arguments:
     - /s
     - PPDMHostName={{ ppdm_fqdn }}
