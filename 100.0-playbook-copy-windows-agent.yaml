@@ -8,7 +8,11 @@
    agent_ver: "1915"
    agent_branch: "19.15-69"  
    agent_src: /tmp
-  tasks: 
+  tasks:
+  - name: Checking Required Variable ppdm_fqdn
+    fail: 
+      msg: "We do not have ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)   
   - name: Copy agent to {{ ansible_fqdn }}
     ansible.windows.win_copy:
       src: "{{ agent_src }}/{{ app_agent }}"
