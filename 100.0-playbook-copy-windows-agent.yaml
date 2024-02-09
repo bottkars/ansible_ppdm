@@ -21,6 +21,11 @@
     community.windows.win_unzip:
       src: "C:/Temp/{{ app_agent | basename }}"
       dest: C:/swdist
+    register: unzip  
+  - name: Find files in path based on regex pattern
+    ansible.windows.win_find:
+      paths: c:/swdist/nt64
+      patterns: "*.exe"      
   - name: "Install {{ app_agent | basename }} on {{ ansible_fqdn }}"
     ansible.windows.win_package:
       path: "C:/swdist/nt64/{{ app_agent | basename | splitext | first }}.exe"
