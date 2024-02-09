@@ -24,7 +24,7 @@
     register: unzip  
   - name: Find files in path based on regex pattern
     ansible.windows.win_find:
-      paths: c:/swdist
+      paths: c:/swdist/ntx64
       patterns: "*.exe"
     register: find_file        
   - name: "Install {{ app_agent | basename }} on {{ ansible_fqdn }}"
