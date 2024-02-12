@@ -5,8 +5,12 @@
     - ./vars/main.yml
     - ./vars/agents_vars.yaml
   vars:
-   agent_ver: "1915"
-   agent_branch: "19.15-69"  
+   agent_major: 19
+   agent_minor: 15
+   agent_patch: 69 
+   agent_ver: "{{ agent_major }}{{ agent_minor }}"
+   agent_branch: "{{ agent_major }}.{{ agent_minor }}-{{agent_patch}}"
+   agent_release: "{{ agent_major }}.{{ agent_minor }}.0.{{agent_patch}}" 
    agent_src: /tmp
   tasks:
   - name: Checking Required Variable ppdm_fqdn
@@ -24,8 +28,8 @@
     register: unzip  
   - name: Find files in path based on regex pattern
     ansible.windows.win_find:
-      paths: c:/swdist/ntx64
-      patterns: "*.exe"
+      paths: c:/swdist/ntx64, c:/swdist/win_x64
+      patterns: "*-{{ agent_release }}.exe"
     register: find_file        
   - name: "Install {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
     ansible.windows.win_package:
