@@ -50,7 +50,7 @@
       - PPDMHostname={{ ppdm_fqdn }}
       - EnableFirewallRules=1
       - PreferredAddress={{ ansible_fqdn }}
-      - EnableSSMS= {{ enable_ssms | default(1) }}
+      - EnableSSMS={{ enable_ssms | default(1) }}
       - InstallPPDMAgentCheckBox=1
     when: app_agent == msapp_agent_windows  
 

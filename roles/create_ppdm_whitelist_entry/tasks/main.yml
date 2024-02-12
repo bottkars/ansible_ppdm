@@ -16,9 +16,6 @@
     status_code: 200,201,202,503
     validate_certs: false
   register: result  
-  retries: 10
-  delay: 30
-  until: result.status == 201 or result.status == 200
   when: not ansible_check_mode and whitelist.id is not defined
 - set_fact:
     whitelist: "{{ result.json }}"
