@@ -1,17 +1,17 @@
-- name: Define uri with  ID
+- name: Define uri with activities ID
   set_fact: 
-    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/agent-registration-status/{{ id }}"
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/activities/{{ id }}"
   when: id  | default('', true) | trim != ''
-- name: Define uri without  id
+- name: Define uri without activities id
   set_fact: 
-    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/agent-registration-status"
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/activities"
   when: id  | default('', false) | trim == ''
 - name: Rewrite uri with filter
   set_fact: 
     uri: "{{ uri }}?filter={{ filter | string | urlencode }}"
   when: filter  | default('', true) | trim != ''
 
-- name: Get PPDM Agent registration Status with status {{ condition }}
+- name: Get PPDM activities with status {{ condition }}
   uri:
     method: GET
     url: "{{ uri }}"
@@ -27,11 +27,11 @@
   delay: "{{ delay }}"
   when: not ansible_check_mode 
 - set_fact:
-    agent-registration-status: "{{ result.json.content }}"
+    activities: "{{ result.json.content }}"
   when: result.json.content is defined
 - set_fact:
-    agent-registration-status: "{{ result.json }}"
+    activities: "{{ result.json }}"
   when: id is defined and result.json is defined     
 - debug:
-    msg: "{{ agent-registration-status }}"
+    msg: "{{ activities }}"
     verbosity: 0    
