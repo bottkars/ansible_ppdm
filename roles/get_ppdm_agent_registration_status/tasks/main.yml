@@ -27,11 +27,11 @@
   delay: "{{ delay }}"
   when: not ansible_check_mode 
 - set_fact:
-    agent-registration-status: "{{ result.json.content }}"
+    agent_registration_status: "{{ result.json.content }}"
   when: result.json.content is defined
 - set_fact:
-    agent-registration-status: "{{ result.json }}"
+    agent_registration_status: "{{ result.json }}"
   when: id is defined and result.json is defined     
 - debug:
-    msg: "{{ agent-registration-status }}"
+    msg: "{{ agent_registration_status }}"
     verbosity: 0    
