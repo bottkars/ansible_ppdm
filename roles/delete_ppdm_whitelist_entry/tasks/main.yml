@@ -1,0 +1,16 @@
+- name: Delete PPDM Whitelist Entry {{ id }}
+  uri:
+    method: DELETE
+    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/whitelist/{{ id }}"
+    body_format: json
+    headers:
+      accept: application/json
+      authorization: "Bearer {{ access_token }}"    
+    status_code: 204,401,403,404,409,500
+    validate_certs: false
+  register: result  
+#  retries: "10"
+#  delay: "30"
+#  until: result.status == 201 or result.status == 200
+  when: not ansible_check_mode   
+
