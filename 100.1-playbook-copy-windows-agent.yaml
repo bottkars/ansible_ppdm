@@ -36,4 +36,4 @@
       - PPDMHostName={{ ppdm_fqdn }}
       - EnableFirewallRules=1
       - PreferredAddress={{ ansible_fqdn }}
-    when: app_agent is fs_agent_windows  
+    when: app_agent == fs_agent_windows  
