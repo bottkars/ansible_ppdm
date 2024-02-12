@@ -47,7 +47,7 @@
       product_id: "{{ app_agent_product_id | default('') }}"
       arguments:
       - /s
-      - PPDMHostName={{ ppdm_fqdn }}
+      - PPDMHostname={{ ppdm_fqdn }}
       - EnableFirewallRules=1
       - PreferredAddress={{ ansible_fqdn }}
       - EnableSSMS= {{ enable_ssms | default(1) }}
