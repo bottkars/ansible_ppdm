@@ -11,7 +11,7 @@
     uri: "{{ uri }}?filter={{ filter | string | urlencode }}"
   when: filter  | default('', true) | trim != ''
 
-- name: Get PPDM assets with status {{ condition }}
+- name: "Get PPDM Whitelist with status {{ condition }}"
   uri:
     method: GET
     url: "{{ uri }}"
@@ -29,5 +29,5 @@
 - set_fact:
     assets: "{{ result.json.content }}"
 - debug:
-    msg: "{{ assets }}"
+    msg: "{{ whitelist }}"
     verbosity: 1    
