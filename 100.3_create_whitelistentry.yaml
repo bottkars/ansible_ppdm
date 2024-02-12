@@ -34,7 +34,7 @@
       whitelist:
         ip: "{{ item }} "
         state: APPROVED
-      loop: "{{ host_list }}"  
+    loop: "{{ host_list }}"  
 
 
      
