@@ -39,17 +39,17 @@
       state: absent
     when: app_agent == fs_agent_windows
   - name: "Remove with msappagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
-    ansible.windows.win_command:
-      argv: 
-      - "{{ find_file.files[0].path }}" 
+    ansible.windows.win_package:
+      path: "{{ find_file.files[0].path }}" 
+      arguments:
       - /uninstall
       - /q 
       - UninstallAgentService="1" 
-#      product_id: "{{ app_agent_product_id | default('') }}"
-#      state: absent
+      product_id: "{{ app_agent_product_id | default('') }}"
+      state: absent
     when: app_agent == msapp_agent_windows  
-#  - name: remove DPSAPPS directory
-#    ansible.windows.win_file:
-#      path: c:/Program Files/DPSAPPS/
-#      state: absent    
+  - name: remove DPSAPPS directory
+    ansible.windows.win_file:
+      path: c:/Program Files/DPSAPPS/
+      state: absent    
 
