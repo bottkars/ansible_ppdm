@@ -28,25 +28,23 @@
       patterns: "*-{{ agent_release }}.exe"
     register: find_file        
   - name: "Remove with fsagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
-    ansible.windows.win_package:
-      path: "{{ find_file.files[0].path }}"
-      product_id: "{{ app_agent_product_id }}"
-      arguments:
+    ansible.windows.command:
+      argv: 
+      - "{{ find_file.files[0].path }}"
       - /s 
       - /uninstall 
       - UnInstallPPDMAgent="1" 
       - UnInstallBBBWT="1"
-      state: absent
     when: app_agent == fs_agent_windows
   - name: "Remove with msappagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
-    ansible.windows.win_package:
-      path: "{{ find_file.files[0].path }}" 
-      arguments:
+    ansible.windows.win_command:
+      argv: 
+      - "{{ find_file.files[0].path }}" 
       - /uninstall
       - /q 
       - UninstallAgentService="1" 
-      product_id: "{{ app_agent_product_id | default('') }}"
-      state: absent
+#      product_id: "{{ app_agent_product_id | default('') }}"
+#      state: absent
     when: app_agent == msapp_agent_windows  
   - name: remove DPSAPPS directory
     ansible.windows.win_file:
