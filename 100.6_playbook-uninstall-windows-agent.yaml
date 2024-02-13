@@ -12,11 +12,7 @@
    agent_branch: "{{ agent_major }}.{{ agent_minor }}-{{agent_patch}}"
    agent_release: "{{ agent_major }}.{{ agent_minor }}.0.{{agent_patch}}" 
    agent_src: /tmp
-  tasks:
-  - name: Checking Required Variable ppdm_fqdn
-    fail: 
-      msg: "We do not have ppdm fqdn set !"
-    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)   
+  tasks: 
   - name: Copy agent to {{ ansible_fqdn }}
     ansible.windows.win_copy:
       src: "{{ agent_src }}/{{ app_agent }}"
