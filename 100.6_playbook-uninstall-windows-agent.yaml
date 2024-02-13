@@ -28,7 +28,7 @@
       patterns: "*-{{ agent_release }}.exe"
     register: find_file        
   - name: "Remove with fsagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
-    ansible.windows.command:
+    ansible.windows.win_command:
       argv: 
       - "{{ find_file.files[0].path }}"
       - /s 
