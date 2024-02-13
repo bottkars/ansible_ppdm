@@ -40,7 +40,7 @@
     when: app_agent == fs_agent_windows
   - name: "Remove with msappagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
     ansible.windows.win_command:
-      cmd: "{{ find_file.files[0].path }}" 
+      argv: "{{ find_file.files[0].path }}" 
       - /uninstall
       - /q 
       - UninstallAgentService="1" 
