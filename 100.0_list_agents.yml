@@ -33,7 +33,7 @@
 
   - name: Dget agents list
     include_role:
-      name: get_ppd_agents_list
+      name: get_ppdm_agents_list
 
   - debug: 
       msg: "{{ agents_list }}"
