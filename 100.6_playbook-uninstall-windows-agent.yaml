@@ -36,8 +36,8 @@
       - /uninstall 
       - UnInstallPPDMAgent="1" 
       - UnInstallBBBWT="1"
-      - PPDMHostName={{ ppdm_fqdn }}
-      - UninstallAgentService="1" 
+      - PPDMHostName="{{ ppdm_fqdn }}"
+      - UnInstallPPDMAgent="1" 
 #      state: absent
     when: app_agent == fs_agent_windows
   - name: "Remove with msappagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
