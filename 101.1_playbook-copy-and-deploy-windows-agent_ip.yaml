@@ -32,6 +32,12 @@
       patterns: "*-{{ agent_release }}.exe"
     register: find_file        
   - name: "Install with fsagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
+    vars:
+      hostip: |-
+            {%- if ansible_interfaces[0].ipv4.address is defined -%}
+            {{ ansible_interfaces[0].ipv4.address }}
+            {%- else -%}
+            {{ ansible_interfaces[0].ipv4[0].address }}
     ansible.windows.win_package:
       path: "{{ find_file.files[0].path }}"
       product_id: "{{ app_agent_product_id }}"
@@ -39,7 +45,7 @@
       - /s
       - PPDMHostName={{ ppdm_fqdn }}
       - EnableFirewallRules=1
-      - PreferredAddress={{ ansible_interfaces[0].ipv4.[0]address | default({{ansible_interfaces[0].ipv4.address}}) }}
+      - PreferredAddress={{ hostip }}
     when: app_agent == fs_agent_windows
   - name: "Install with msappagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
     ansible.windows.win_package:
@@ -51,6 +57,6 @@
       - EnableFirewallRules=1
       - PreferredAddress={{ ansible_interfaces[0].ipv4[0].address }}
       - EnableSSMS={{ enable_ssms | default(1) }}
-      - PreferredAddress={{ ansible_interfaces[0].ipv4.[0]address | default(ansible_interfaces[0].ipv4.address) }}
+      - InstallPPDMAgentCheckBox=1
     when: app_agent == msapp_agent_windows  
 
