@@ -1,7 +1,7 @@
 - name: Get PPDM Agents List
   uri:
     method: GET
-    url: "{{ ppdm_baseurl }}:{{ ppdm_port }}/agents-list"
+    url: "{{ ppdm_baseurl }}/agents-list"
     body_format: json 
     headers:
       accept: application/json
