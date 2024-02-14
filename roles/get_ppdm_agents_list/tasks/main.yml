@@ -4,7 +4,7 @@
     url: "{{ ppdm_baseurl }}/agents-list"
     body_format: json 
     headers:
-      accept: application/json
+      accept: application/html
       authorization: "Bearer {{ access_token }}"    
     status_code: 200,500
     validate_certs: false
