@@ -28,9 +28,10 @@
       patterns: "*-{{ agent_release }}.exe"
     register: find_file        
   - name: "Remove with fsagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
-    ansible.windows.win_command:
-      argv:
-      - "{{ find_file.files[0].path }}"
+    ansible.windows.win_package:
+      path: "{{ find_file.files[0].path }}"
+#      product_id: "{{ app_agent_product_id | default('') }}"
+      arguments:
       - /s 
       - /uninstall 
       - UnInstallPPDMAgent="1" 
