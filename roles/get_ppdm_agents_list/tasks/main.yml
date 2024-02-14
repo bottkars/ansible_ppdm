@@ -2,7 +2,7 @@
   uri:
     method: GET
     url: "{{ ppdm_baseurl }}/agents-list"
-    body_format: json 
+    body_format: html 
     headers:
       accept: application/html
       authorization: "Bearer {{ access_token }}"    
