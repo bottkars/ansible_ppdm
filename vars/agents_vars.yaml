@@ -1,7 +1,8 @@
 fs_agent_windows: "{{ agent_branch }}/Windows/FS/fsagent{{ agent_ver }}_win_x64.zip"
 fs_agent_linux: "{{ agent_branch }}/Linux/FS/fsagent{{ agent_ver }}_linux_x86_64.tar.gz"
 msapp_agent_windows: "{{ agent_branch }}/Windows/MSApp/msappagent{{ agent_ver }}_win_x64.zip"
+exchange_agent_windows: "{{ agent_branch }}/Windows/MSApp/msappagent{{ agent_ver }}_win_x64.zip"
 fs_agent_aixpower: "{{ agent_branch }}/Aix/FS/fsagent{{ agent_ver }}_aixpower.tar.gz"
 ora_agent_linux: "{{ agent_branch }}/Linux/Oracle/ddrman{{ agent_ver }}_linux_x86_64.tar"
 ora_agent_aix: "{{ agent_branch }}/Aix/Oracle/ddrman{{ agent_ver }}_aixpower.tar"
-dbapp_agent_linux: "{{ agent_branch }}/Linux/Dbapp/dbappagent{{ agent_ver }}_linux_x86_64.tar.gz"
+dbapp_agent_linux: "{{ agent_branch }}/Linux/Dbapp/dbappagent{{ agent_ver }}_linux_x86_64.tar.gz"1.1  
