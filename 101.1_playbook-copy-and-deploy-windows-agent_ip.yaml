@@ -38,6 +38,7 @@
             {{ ansible_interfaces[0].ipv4.address }}
             {%- else -%}
             {{ ansible_interfaces[0].ipv4[0].address }}
+            {%- endif -%}
     ansible.windows.win_package:
       path: "{{ find_file.files[0].path }}"
       product_id: "{{ app_agent_product_id }}"
