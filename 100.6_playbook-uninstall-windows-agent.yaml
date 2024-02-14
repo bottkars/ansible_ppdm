@@ -30,24 +30,26 @@
   - name: "Remove with fsagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
     ansible.windows.win_package:
       path: "{{ find_file.files[0].path }}"
-#      product_id: "{{ app_agent_product_id }}"
+      product_id: "{{ app_agent_product_id | default('') }}"
       arguments:
       - /s 
       - /uninstall 
       - UnInstallPPDMAgent="1" 
       - UnInstallBBBWT="1"
-      - PPDMHostName="{{ ppdm_fqdn }}"
+      - PPDMHostName={{ ppdm_fqdn }}
       state: absent
     when: app_agent == fs_agent_windows
   - name: "Remove with msappagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
-    ansible.windows.win_c:
-      argv: 
-      - "{{ find_file.files[0].path }}" 
+    ansible.windows.win_package:
+      path: "{{ find_file.files[0].path }}"
+      product_id: "{{ app_agent_product_id | default('') }}"
+      arguments:
+      - /q
       - /uninstall
-      - /q 
+      - PPDMHostname={{ ppdm_fqdn }}
       - UninstallAgentService="1" 
 #      product_id: "{{ app_agent_product_id | default('') }}"
-#      state: absent
+      state: absent
     when: app_agent == msapp_agent_windows  
 #  - name: remove DPSAPPS directory
 #    ansible.windows.win_file:
