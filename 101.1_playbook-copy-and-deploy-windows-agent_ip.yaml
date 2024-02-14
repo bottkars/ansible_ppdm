@@ -39,7 +39,7 @@
       - /s
       - PPDMHostName={{ ppdm_fqdn }}
       - EnableFirewallRules=1
-      - PreferredAddress={{ ansible_default_ipv4.address }}
+      - PreferredAddress={{ ansible_interfaces[0].ipv4[0].address }}
     when: app_agent == fs_agent_windows
   - name: "Install with msappagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
     ansible.windows.win_package:
