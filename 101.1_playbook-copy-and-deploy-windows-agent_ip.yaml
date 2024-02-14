@@ -34,10 +34,14 @@
   - name: "Install with fsagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
     vars:
       preferred_address: |-
-            {%- if ansible_interfaces[0].ipv4.address is defined -%}
-            {{ ansible_interfaces[0].ipv4.address }}
+            {%- if by_ip is defined -%}     
+              {%- if ansible_interfaces[0].ipv4.address is defined -%}
+              {{ ansible_interfaces[0].ipv4.address }}
+              {%- else -%}
+              {{ ansible_interfaces[0].ipv4[0].address }}
+              {%- endif -%}
             {%- else -%}
-            {{ ansible_interfaces[0].ipv4[0].address }}
+            {{ ansible_fqdn }}   
             {%- endif -%}
     ansible.windows.win_package:
       path: "{{ find_file.files[0].path }}"
