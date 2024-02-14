@@ -29,7 +29,7 @@
     register: find_file        
   - name: "Remove with fsagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
     ansible.windows.win_command:
-      cmd: '"{{ find_file.files[0].path }}" /s /uninstall UnInstallPPDMAgent="1" UnInstallBBBWT="1" PPDMHostName="{{ ppdm_fqdn }}" UnInstallPPDMAgent="1"'
+      cmd: '"{{ find_file.files[0].path }}" /s /uninstall UnInstallBBBWT="1" PPDMHostName="{{ ppdm_fqdn }}" UnInstallPPDMAgent="1"'
     when: app_agent == fs_agent_windows
   - name: "Remove with msappagent {{ find_file.files[0].path }} on {{ ansible_fqdn }}"
     ansible.windows.win_package:
