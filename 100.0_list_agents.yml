@@ -4,10 +4,6 @@
   connection: local
   vars_files: 
     - ./vars/main.yml
-    - ./vars/agents_vars.yaml
-  vars:
-   agent_ver: "1915"
-   agent_branch: "19.15-69"  
   tasks:
   - name: Checking Required Variable ppdm_fqdn
     fail: 
@@ -35,8 +31,18 @@
     include_role:
       name: get_ppdm_agents_list
 
-  - debug: 
-      msg: "{{ agents_list }}"
-      verbosity: 1
-    name: show me da gents  
-     
+  - name: Setting Agent Vars 
+    vars: 
+      semver_list: "{{ agents_list[0] | regex_search('([0-9]{1,2}).([0-9]{1,2})-([0-9]{1,2})', '\\1', '\\2', '\\3')}}"
+      agent_major: "{{semver_list[0]}}"
+      agent_minor: "{{semver_list[1]}}"
+      agent_patch: "{{semver_list[2]}}"      
+    set_fact:
+      agents:
+        agent_ver: "{{ agent_major }}{{ agent_minor }}"
+        agent_branch: "{{ agent_major }}.{{ agent_minor }}-{{agent_patch}}"
+        agent_release: "{{ agent_major }}.{{ agent_minor }}.0.{{agent_patch}}" 
+  - local_action: 
+      module: copy 
+      content: "{{ agents }}"
+      dest: /tmp/agents.yaml

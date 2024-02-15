@@ -5,9 +5,8 @@
   vars_files: 
     - ./vars/main.yml
     - ./vars/agents_vars.yaml
-  vars:
-   agent_ver: "1915"
-   agent_branch: "19.15-69"  
+  vars: 
+    download_destination: /tmp
   tasks:
   - name: Checking Required Variable ppdm_fqdn
     fail: 
@@ -30,30 +29,55 @@
       msg: "{{ access_token }}"
       verbosity: 1
     name: do we have a token ?  
-
+  - name: get current agents list from PPDM Server
+    include_role:
+      name: get_ppdm_agents_list
+  - name: Setting Agent Vars 
+    vars: 
+      semver_list: "{{ agents_list[0] | regex_search('([0-9]{1,2}).([0-9]{1,2})-([0-9]{1,2})', '\\1', '\\2', '\\3')}}"
+      agent_major: "{{semver_list[0]}}"
+      agent_minor: "{{semver_list[1]}}"
+      agent_patch: "{{semver_list[2]}}"      
+    set_fact:
+      agents:
+        agent_ver: "{{ agent_major }}{{ agent_minor }}"
+        agent_branch: "{{ agent_major }}.{{ agent_minor }}-{{agent_patch}}"
+        agent_release: "{{ agent_major }}.{{ agent_minor }}.0.{{agent_patch}}"
+      agent_ver: "{{ agent_major }}{{ agent_minor }}"
+      agent_branch: "{{ agent_major }}.{{ agent_minor }}-{{agent_patch}}"
+      agent_release: "{{ agent_major }}.{{ agent_minor }}.0.{{agent_patch}}"    
+  - local_action: 
+      module: copy 
+      content: "{{ agents }}"
+      dest: "/tmp/agents-{{ agents.agent_branch }}.yaml"
   - name: Download FS Agents Windows
     vars:
       agent_filename: "{{ fs_agent_windows }}"
+      agent_destination: "{{ download_destination }}"
     include_role:
       name: download_agents
   - name: Download FS Agents Linux
     vars:
       agent_filename: "{{ fs_agent_linux }}"
+      agent_destination: "{{ download_destination }}"
     include_role:
       name: download_agents      
   - name: Download MSApps Agents Windows
     vars:
       agent_filename: "{{ msapp_agent_windows }}"
+      agent_destination: "{{ download_destination }}"
     include_role:
       name: download_agents
   - name: Download Oracle Agents Linux
     vars:
       agent_filename: "{{ ora_agent_linux }}"
+      agent_destination: "{{ download_destination }}"
     include_role:
       name: download_agents
   - name: Download SAP Hana Agents Linux
     vars:
       agent_filename: "{{ dbapp_agent_linux }}"
+      agent_destination: "{{ download_destination }}"
     include_role:
       name: download_agents      
           
