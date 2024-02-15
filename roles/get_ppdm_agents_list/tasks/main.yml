@@ -5,6 +5,7 @@
     body_format: raw
     return_content: true
     headers:
+      content_type: application/json
       accept: "application/json, text/plain, */*"
       authorization: "Bearer {{ access_token }}" 
     status_code: 200,500
