@@ -6,6 +6,7 @@
       accept: "application/json, text/plain, */*"
       authorization: "Bearer {{ access_token }}" 
     status_code: 200,500
+    decompress: false
     validate_certs: false
   register: result  
 - set_fact:
