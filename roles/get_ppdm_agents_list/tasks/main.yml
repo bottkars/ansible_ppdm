@@ -3,9 +3,9 @@
     method: GET
     url: "{{ ppdm_baseurl }}/agents-list"
     headers:
-      content-type: text/html; charset=utf8
-      accept: application/json
-      authorization: "Bearer {{ access_token }}"    
+      accept: application/json, text/plain
+      authorization: "Bearer {{ access_token }}" 
+      Xppdm-Caller: PPDM-UI   
     status_code: 200,500
     validate_certs: false
   register: result  
