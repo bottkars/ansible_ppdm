@@ -5,14 +5,13 @@
     headers:
       accept: application/json, text/plain
       authorization: "Bearer {{ access_token }}" 
-      Xppdm-Caller: PPDM-UI   
     status_code: 200,500
     validate_certs: false
   register: result  
   when: not ansible_check_mode 
 - set_fact:
-    agents_list: "{{ result}}"
+    agents_list: "{{ result.json }}"
 - debug:
-    msg: "{{ result }}"
+    msg: "{{ agents_list }}"
     verbosity: 0    
 
