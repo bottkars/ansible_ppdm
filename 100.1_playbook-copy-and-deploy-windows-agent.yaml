@@ -5,12 +5,6 @@
     - ./vars/main.yml
     - ./vars/agents_vars.yaml
   vars:
-   agent_major: 19
-   agent_minor: 15
-   agent_patch: 69 
-   agent_ver: "{{ agent_major }}{{ agent_minor }}"
-   agent_branch: "{{ agent_major }}.{{ agent_minor }}-{{agent_patch}}"
-   agent_release: "{{ agent_major }}.{{ agent_minor }}.0.{{agent_patch}}" 
    agent_src: /tmp
   tasks:
   - name: Checking Required Variable ppdm_fqdn
