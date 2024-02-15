@@ -11,7 +11,7 @@
     validate_certs: false
   register: result  
 - set_fact:
-    agents_list: "{{ result.json }}"
+    agents_list: "{{ result }}"
 - debug:
     msg: "{{ agents_list }}"
     verbosity: 0    
