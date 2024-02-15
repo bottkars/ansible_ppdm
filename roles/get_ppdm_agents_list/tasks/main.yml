@@ -3,7 +3,7 @@
     method: GET
     url: "{{ ppdm_baseurl }}:{{ ppdm_port }}/agents-list"
     headers:
-      accept: "application/json, text/plain"
+      accept: "application/json, text/plain, */*"
       authorization: "Bearer {{ access_token }}" 
     status_code: 200,500
     validate_certs: false
