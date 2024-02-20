@@ -34,4 +34,4 @@
   when: id is defined and result.json is defined     
 - debug:
     msg: "{{ agent_registration_status }}"
-    verbosity: 0    
+    verbosity: 1    
