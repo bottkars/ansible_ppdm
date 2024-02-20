@@ -87,16 +87,16 @@
       msg: "{{ access_token }}"
       verbosity: 1
     name: do we have a token ?  
-  - name: enable Kubernetes Asset Source
-    include_role: 
-      name: set_ppdm_asset_setting
-    vars: 
-      data:
-        id: ASSET_SETTING
-        properties:
-        - name: enabledAssetTypes
-          type: LIST
-          value: KUBERNETES
+ # - name: enable Kubernetes Asset Source
+ #   include_role: 
+ #     name: set_ppdm_asset_setting
+ #   vars: 
+ #     data:
+ #       id: ASSET_SETTING
+ #       properties:
+ #       - name: enabledAssetTypes
+ #         type: LIST
+#        value: KUBERNETES
   - name: Get Kubernetes Host Certificate for {{ k8s_fqdn }}
     include_role:
       name: get_ppdm_host_certificate  
