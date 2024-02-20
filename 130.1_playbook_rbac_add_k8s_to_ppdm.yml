@@ -39,12 +39,12 @@
       k8s_fqdn: "{{ api_status.connection.host | regex_replace('^https://') | regex_replace('\\:\\d+') }}" 
       k8s_port: "{{ api_status.connection.host.split(':').2 | default('443')}}"
       k8s_name: "{{ api_status.connection.host.split('.').1 }}"
-  - name: apply PPDM RBAC
+  - name: apply PPDM RBAC from {{ rbac_source }}
     k8s:
       verify_ssl: no
       state: present
       src: "{{ rbac_source }}/ppdm-controller-rbac.yaml"    
-  - name: apply PPDM discovery
+  - name: apply PPDM discovery from {{ rbac_source }}
     k8s:
       verify_ssl: no
       state: present
