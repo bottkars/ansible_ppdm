@@ -169,6 +169,6 @@
     when: protection_rule.inventorySourceType is defined
   - debug: 
       msg: "{{ protection_rule_run }}"
-      verbosity: 0
+      verbosity: 1
     when: protection_rule.inventorySourceType is defined
 
