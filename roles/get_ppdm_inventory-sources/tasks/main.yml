@@ -24,8 +24,14 @@
   retries: "{{ retries }}"
   delay: "{{ delay }}"
   when: not ansible_check_mode 
+
+
 - set_fact:
     inventorysources: "{{ result.json.content }}"
+  when: result.json.content is defined
+- set_fact:
+    inventorysources: "{{ result.json }}"
+  when: id  | default('', true) | trim != '' and result.json is defined     
 - debug:
     msg: "{{ inventorysources }}"
-    verbosity: 1    
+    verbosity: 1      

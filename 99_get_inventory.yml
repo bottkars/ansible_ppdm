@@ -1,5 +1,5 @@
 # Example Playbook to configure PPDM Certificates
-- name: Re-IP Inventory Source
+- name: Get PPDM Inventory Sources
   hosts: localhost
   connection: local
   vars_files: 
@@ -22,6 +22,18 @@
       name: get_ppdm_inventory-sources
     vars:
       filter: "{{ inventory_filter | default('') }}"
+      id: "{{ inventory_id | default('') }}"
   - debug:
+      msg: "{{ inventorysources  | json_query('[*].{name: name,id: id,type: type}') }}"
+      verbosity: 0   
+
+  - name: inventorysources Result summary
+    debug: 
+      msg: "{{ inventorysources | json_query('[*].{name: name,id: id,type: type}') }}"
+      verbosity: 0   
+    when: inventorysources is defined
+  - name: inventorysource Result
+    debug: 
       msg: "{{ inventorysources }}"
       verbosity: 0   
+    when: inventorysources is defined and inventory_id is defined

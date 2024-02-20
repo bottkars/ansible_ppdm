@@ -25,8 +25,13 @@
   retries: "{{ retries }}"
   delay: "{{ delay }}"
   when: not ansible_check_mode 
+
 - set_fact:
     protection_policy: "{{ result.json.content }}"
+  when: result.json.content is defined
+- set_fact:
+    protection_policy: "{{ result.json }}"
+  when: id  | default('', true) | trim != '' and result.json is defined     
 - debug:
     msg: "{{ protection_policy }}"
-    verbosity: 0    
+    verbosity: 1    

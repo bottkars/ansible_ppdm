@@ -61,6 +61,11 @@ and see the dr jobs status
 ansible-playbook ~/workspace/ansible_ppdm/31.1-playbook_get_activities.yml --extra-vars "filter='category eq \"DISASTER_RECOVERY\"'"
 ```
 
+get protected assets
+```bash
+ansible-playbook $HOME/workspace/ansible_ppdm/30.0-playbook_get_assets.yml -e "asset_filter='protectionStatus eq \"PROTECTED\"'"
+```
+
 create a kubernetes policy and rule ...
 
 ```bash

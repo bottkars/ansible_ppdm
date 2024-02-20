@@ -31,7 +31,7 @@
   when: result.json.content is defined
 - set_fact:
     activities: "{{ result.json }}"
-  when: id is defined and result.json is defined     
+  when: id  | default('', true) | trim != '' and result.json is defined       
 - debug:
     msg: "{{ activities }}"
-    verbosity: 0    
+    verbosity: 1    

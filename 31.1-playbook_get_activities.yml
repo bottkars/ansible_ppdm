@@ -1,5 +1,5 @@
 # Example Playbook to configure query PPDM Server Disaster Recovery
-- name: Set PPDM SDR
+- name: Get PPDM Activities
   hosts: localhost
   connection: local
   vars:
@@ -23,9 +23,16 @@
     include_role: 
       name: get_ppdm_activities
     vars:
-        filter: "{{ lookup('env','filter')| default('') }}"
+        filter: "{{ activity_filter | default('') }}"
         id: "{{ activity_id | default('') }}"
-  - name: Assets Result
+  - name: Activities Result Short, full result in fact activities
+    debug: 
+      msg: "{{ activities | json_query('[*].{name: name,id: id,type: type}') }}"
+      verbosity: 0   
+    when: activities is defined
+  - name: Activities Result
     debug: 
       msg: "{{ activities }}"
-      verbosity: 0 
+      verbosity: 0   
+    when: activities is defined and activity_id is defined
+

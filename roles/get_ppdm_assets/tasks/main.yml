@@ -28,6 +28,10 @@
   when: not ansible_check_mode 
 - set_fact:
     assets: "{{ result.json.content }}"
+  when: result.json.content is defined
+- set_fact:
+    assets: "{{ result.json }}"
+  when: id  | default('', true) | trim != '' and result.json is defined     
 - debug:
     msg: "{{ assets }}"
-    verbosity: 1    
+    verbosity: 0    
