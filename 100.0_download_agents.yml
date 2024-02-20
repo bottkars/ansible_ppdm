@@ -49,7 +49,11 @@
   - local_action: 
       module: copy 
       content: "{{ agents }}"
-      dest: "/tmp/agents-{{ agents.agent_branch }}.yaml"
+      dest: "{{ download_destination }}/agents-{{ agents.agent_branch }}.yaml"
+  - local_action: 
+      module: copy 
+      content: "{{ agents }}"
+      dest: "{{ download_destination }}/agents.yaml"      
   - name: Download FS Agents Windows
     vars:
       agent_filename: "{{ fs_agent_windows }}"
