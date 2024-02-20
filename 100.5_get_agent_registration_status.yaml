@@ -35,7 +35,7 @@
     include_role:
       name: get_ppdm_agent_registration_status
 
-  - name: Assets Result
+  - name: Agent Registration Brief Result
     debug: 
       msg: "{{ agent_registration_status | json_query('[*].{hostname: hostname,hostId: hostId,os: os,status: status }') }}"
       verbosity: 0   
@@ -44,7 +44,7 @@
     debug: 
       msg: "{{ agent_registration_status }}"
       verbosity: 0   
-    when: agent_registration_status is defined and hosz_id is defined
+    when: agent_registration_status is defined and detailed is defined
 
 
      
