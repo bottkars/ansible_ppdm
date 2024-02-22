@@ -43,7 +43,7 @@
       product_id: "{{ app_agent_product_id }}"
       arguments:
       - /s
-      - PPDMHostName={{ ppdm_fqdn }}
+      - PPDMHostName=}{{ ppdm_fqdn | regex_replace('^https://') }}
       - EnableFirewallRules=1
       - PreferredAddress={{ preferred_address }}
     when: app_agent == fs_agent_windows
@@ -64,7 +64,7 @@
       product_id: "{{ app_agent_product_id | default('') }}"
       arguments:
       - /s
-      - PPDMHostname={{ ppdm_fqdn }}
+      - PPDMHostname={{ ppdm_fqdn | regex_replace('^https://') }}
       - EnableFirewallRules=1
       - PreferredAddress={{ preferred_address }}
       - EnableSSMS={{ enable_ssms | default(0) }}
@@ -87,7 +87,7 @@
       product_id: "{{ app_agent_product_id | default('') }}"
       arguments:
       - /s
-      - PPDMHostname={{ ppdm_fqdn }}
+      - PPDMHostname={{ ppdm_fqdn | regex_replace('^https://') }}
       - EnableFirewallRules=1
       - PreferredAddress={{ preferred_address }}
       - EnableItemPoint={{ enable_itempoint | default(0) }}
