@@ -59,7 +59,5 @@
         ip: "{{ agent_registration_status | json_query(hostname) | json_query('[*].agent.address') | first }}"
         state: APPROVED
     with_items: "{{ host_list.split(',') }}"  
-    debug:
-      msg: "{{ whitelist }}"
-      verbosity: 0
+
      

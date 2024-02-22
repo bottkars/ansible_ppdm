@@ -22,5 +22,5 @@
   when: whitelist.id is not defined   
 - debug:
     msg: "{{ whitelist }}"
-    verbosity: 1
+    verbosity: 0
   when: whitelist is defined   
