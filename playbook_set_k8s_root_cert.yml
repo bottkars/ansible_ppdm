@@ -1,6 +1,7 @@
 # Example Playbok to Add Kubernetes Cluster to PPDM
 - name: Set K8S Root
   hosts: localhost
+  gather_facts: no
   connection: local
   vars_files: 
     - ./vars/main.yml

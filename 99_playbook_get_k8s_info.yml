@@ -4,6 +4,7 @@
 # e.g. export K8S_AUTH_KUBECONFIG= 
 - name: Get K8S Info
   hosts: localhost
+  gather_facts: no
   connection: local
   vars_files: 
     - ./vars/main.yml

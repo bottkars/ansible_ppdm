@@ -4,6 +4,7 @@
 # e.g. export K8S_AUTH_KUBECONFIG= 
 - name: Add K8S to PPDM
   hosts: localhost
+  gather_facts: no
   connection: local
   vars_files: 
     - ./vars/main.yml

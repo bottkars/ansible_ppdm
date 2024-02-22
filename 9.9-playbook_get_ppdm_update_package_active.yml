@@ -5,6 +5,7 @@
 #
 - name: get PPDM Update Package
   hosts: localhost
+  gather_facts: no
   connection: local
   vars_files: 
     - ./vars/main.yml

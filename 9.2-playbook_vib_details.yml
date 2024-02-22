@@ -1,6 +1,7 @@
 # Example Playbook to configure PPDM Certificates
 - name: Set PPDM vib-details
   hosts: localhost
+  gather_facts: no
   connection: local
   vars_files: 
     - ./vars/main.yml

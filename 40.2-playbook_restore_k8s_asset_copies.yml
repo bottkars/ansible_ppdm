@@ -1,5 +1,6 @@
 - name: Get k8s Copies
   hosts: localhost
+  gather_facts: no
   connection: local
   vars_files: 
     - ./vars/main.yml

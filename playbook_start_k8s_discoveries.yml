@@ -1,6 +1,7 @@
 # Example Playbok to Add Kubernetes Cluster to PPDM
 - name: Discover PPDM K8S Inventory
   hosts: localhost
+  gather_facts: no
   connection: local
   vars_files: 
     - ./vars/main.yml

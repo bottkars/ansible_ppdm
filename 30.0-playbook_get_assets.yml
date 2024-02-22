@@ -1,6 +1,7 @@
 # Example Playbook to configure query PPDM Server Disaster Recovery
 - name: Get PPDM Assets
   hosts: localhost
+  gather_facts: no
   connection: local
   vars_files: 
     - ./vars/main.yml

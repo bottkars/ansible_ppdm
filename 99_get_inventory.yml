@@ -1,6 +1,7 @@
 # Example Playbook to configure PPDM Certificates
 - name: Get PPDM Inventory Sources
   hosts: localhost
+  gather_facts: no
   connection: local
   vars_files: 
     - ./vars/main.yml

@@ -5,6 +5,7 @@
 #
 - name: Upgrade PPDM
   hosts: localhost
+  gather_facts: no
   connection: local
   vars_files: 
     - ./vars/main.yml

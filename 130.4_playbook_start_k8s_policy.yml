@@ -1,6 +1,7 @@
 # Example Playbok to Add Kubernetes Cluster to PPDM
 - name: Start Kubernetes Policy by name Query
   hosts: localhost
+  gather_facts: no
   connection: local
   vars:  
     k8s_policy_name: K8S_Protection 3hrs 3days

@@ -2,6 +2,7 @@
 # a local credentila will be created for the SU, assuming buts user exists
 - name: Set PPDM SDR
   hosts: localhost
+  gather_facts: no
   connection: local
   vars_files: 
     - ./vars/main.yml

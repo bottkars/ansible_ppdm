@@ -1,6 +1,7 @@
 # Example Playbook to Upload PPDM Upgrade
 - name: Upload PPDM upgrade
   hosts: localhost
+  gather_facts: no
   connection: local
   vars_files: 
     - ./vars/main.yml
