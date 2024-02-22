@@ -1,0 +1,49 @@
+# Example Playbok to deploy agentzs
+- name: Approve Agents by Querying hostlist to registered adsress
+  hosts: localhost
+  gather_facts: yes
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+    - ./vars/agents_vars.yaml
+  vars:
+   agent_ver: "1915"
+   agent_branch: "19.15-69"  
+  tasks:
+  - name: Checking Required Variable ppdm_fqdn
+    fail: 
+      msg: "We do not have ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variable ppdm_new_password
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+ 
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+
+  - name: get agent whitelist 
+    include_role:
+      name: get_ppdm_agent_registration_status
+
+  - name: create agent whitelist with query
+    include_role:
+      name: create_ppdm_whitelist_entry
+    vars:
+      hostname: "[?hostname=='{{ item }}']"
+      whitelist:
+        ip: "{{ agent_registration_status | json_query(hostname) | json_query('[*].agent.address') | first }}"
+        state: APPROVED
+    with_items: "{{ host_list.split(',') }}"  
+
+     
