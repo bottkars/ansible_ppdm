@@ -56,7 +56,7 @@
     vars:
       hostname: "[?hostname=='{{ item }}']"
       whitelist:
-        ip: "{{ agent_registration_status | json_query(hostname) | json_query('agent.address') }}"
+        ip: "{{ agent_registration_status | json_query(hostname) | json_query('[*].agent.address') | first }}"
         state: APPROVED
     with_items: "{{ host_list.split(',') }}"  
 
