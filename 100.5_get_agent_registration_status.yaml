@@ -38,7 +38,7 @@
 
   - name: Agent Registration Brief Result
     debug: 
-      msg: "{{ agent_registration_status | json_query('[*].{hostname: hostname,hostId: hostId,os: os,status: status }') }}"
+      msg: "{{ agent_registration_status | json_query('[*].{hostname: hostname,address: agent.address, hostId: hostId,os: os,status: status }') }}"
       verbosity: 0   
     when: agent_registration_status is defined
   - name: Assets Result
