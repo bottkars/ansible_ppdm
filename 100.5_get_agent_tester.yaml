@@ -49,7 +49,7 @@
       msg: "{{ agent_registration_status | json_query(hostname) }}" #  json_query('[*].{hostname: hostname,address: agent.address, hostId: hostId,os: os,status: status }') }}"
       verbosity: 0   
     vars: 
-      hostname: "[?hostnae=='file.demo.local']"
+      hostname: "[?hostname=='file.demo.local']"
 
 
      
