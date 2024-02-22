@@ -28,7 +28,7 @@
       verbosity: 1
     name: do we have a token ?  
 
-  - name: create agent whitelist 
+  - name: create agent whitelist for {{ item }}
     include_role:
       name: create_ppdm_whitelist_entry
     vars:
