@@ -35,7 +35,7 @@
       whitelist:
         ip: "{{ item }}"
         state: APPROVED
-    with_item: "{{ host_list.split(',') }}"  
+    with_items: "{{ host_list.split(',') }}"  
 
 
      
