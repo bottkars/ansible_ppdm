@@ -1,5 +1,5 @@
 # Example Playbok to Add Kubernetes Cluster to PPDM
-- name: Add K8S to PPDM
+- name: Start Kubernetes Policy by name Query
   hosts: localhost
   connection: local
   vars:  
@@ -36,9 +36,6 @@
       name: get_ppdm_protection_policy
     vars:
       filter: assetType eq "KUBERNETES" & name eq "{{ k8s_policy_name }}" 
-
-
-
   - name: Run Protection Policy
     vars:
       policy_id: "{{ protection_policy[0].id }}"
