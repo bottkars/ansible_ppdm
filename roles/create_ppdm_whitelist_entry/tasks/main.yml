@@ -13,7 +13,7 @@
     headers:
       accept: application/json
       authorization: "Bearer {{ access_token }}"    
-    status_code: 200,201,202,503
+    status_code: 200,201,202,409,503
     validate_certs: false
   register: result  
   when: not ansible_check_mode and whitelist.id is not defined
