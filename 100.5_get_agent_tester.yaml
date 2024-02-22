@@ -42,11 +42,9 @@
       verbosity: 0   
     when: agent_registration_status is defined
 
-
-
   - name: Assets Result
     debug: 
-      msg: "{{ agent_registration_status | json_query(hostname).agent.address }}" #  json_query('[*].{hostname: hostname,address: agent.address, hostId: hostId,os: os,status: status }') }}"
+      msg: "{{ agent_registration_status | json_query(hostname) | select(agent.address) }}" #  json_query('[*].{hostname: hostname,address: agent.address, hostId: hostId,os: os,status: status }') }}"
       verbosity: 0   
     vars: 
       hostname: "[?hostname=='{{ item }}']"
