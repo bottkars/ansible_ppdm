@@ -50,5 +50,14 @@
       hostname: "[?hostname=='{{ item }}']"
     with_items: "{{ host_list.split(',') }}"   
 
+  - name: create agent whitelist 
+    include_role:
+      name: create_ppdm_whitelist_entry
+    vars:
+      hostname: "[?hostname=='{{ item }}']"
+      whitelist:
+        ip: "{{ agent_registration_status | json_query(hostname) | json_query('[*].agent.address') }}"
+        state: APPROVED
+    with_items: "{{ host_list.split(',') }}"  
 
      
