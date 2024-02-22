@@ -1,7 +1,7 @@
 # Example Playbok to deploy agentzs
 - name: Get Agent Whitelist
   hosts: localhost
-  gather_facts: no
+  gather_facts: yes
   connection: local
   vars_files: 
     - ./vars/main.yml
