@@ -43,7 +43,7 @@
       product_id: "{{ app_agent_product_id }}"
       arguments:
       - /s
-      - PPDMHostName=}{{ ppdm_fqdn | regex_replace('^https://') }}
+      - PPDMHostName={{ ppdm_fqdn | regex_replace('^https://') }}
       - EnableFirewallRules=1
       - PreferredAddress={{ preferred_address }}
     when: app_agent == fs_agent_windows
