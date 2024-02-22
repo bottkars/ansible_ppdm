@@ -18,8 +18,9 @@
   register: result  
   when: not ansible_check_mode and whitelist.id is not defined
 - set_fact:
-    whitelist_result: "{{ result.json }}"
-#   when: whitelist.id is not defined   
+    whitelist: "{{ result.json }}"
+  when: whitelist.id is not defined   
 - debug:
-    msg: "{{ whitelist_result }}"
+    msg: "{{ whitelist }}"
     verbosity: 0
+  when: whitelist is defined   
