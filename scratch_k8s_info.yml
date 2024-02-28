@@ -30,7 +30,7 @@
       ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
   - name: Get Kubernetes nodes
     set_fact:
-      nodes: "{{ lookup('k8s', api_version='v1', kind='node') }}"
+      nodes: "{{ lookup('k8s', api_version='v1', kind='node', metadata.labels.node-role\.kubernetes\.io/master='' ) }}"
   - name: Add host to inventory
     debug: 
       msg: "{{ nodes | json_query('[*].status.addresses[0].address') }}"      
