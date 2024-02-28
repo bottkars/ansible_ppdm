@@ -35,6 +35,8 @@
   - debug: 
       msg: "Connected to {{ api_status.connection.host }}"
       verbosity: 0
+  - debug:
+      msg:"{{ api_status }}"     
   - name: Setting Connection Parameters from api api_status
     set_fact: 
       k8s_fqdn: "{{ api_status.connection.host | regex_replace('^https://') | regex_replace('\\:\\d+') }}" 
