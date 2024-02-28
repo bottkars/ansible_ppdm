@@ -1,0 +1,42 @@
+# This example Playbook adds a Kubernetes Cluster to PPDM
+# Kubernetes Information will be read from k8s core cluster_info module
+# it is expected that Environment Variables are set for core K8S Modules
+# e.g. export K8S_AUTH_KUBECONFIG= 
+- name: Add K8S to PPDM
+  hosts: localhost
+  gather_facts: no
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  collections:
+   - kubernetes.core     
+  tasks:
+#  - name: install pre-requisites
+#    pip:
+ #     name:
+#        - openshift
+#        - pyyaml
+#        - kubernetes 
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have a ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Setting Base URL
+    ansible.builtin.set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get Cluster information
+    kubernetes.core.k8s_cluster_info:
+#      verify_ssl: no
+    register: api_status
+  - debug: 
+      msg: "Connected to {{ api_status.connection.host }}"
+      verbosity: 0
+  - name: Setting Connection Parameters from api api_status
+    set_fact: 
+      k8s_fqdn: "{{ api_status.connection.host | regex_replace('^https://') | regex_replace('\\:\\d+') }}" 
+      k8s_port: "{{ api_status.connection.host.split(':').2 | default('443')}}"
+      k8s_name: "{{ api_status.connection.host.split('.').1 }}"
