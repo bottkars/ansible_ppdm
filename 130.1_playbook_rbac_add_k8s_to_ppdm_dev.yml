@@ -13,12 +13,6 @@
   vars: 
     vcenter_address: (lookup(en))
   tasks:  
-#  - name: install pre-requisites
-#    pip:
- #     name:
-#        - openshift
-#        - pyyaml
-#        - kubernetes 
   - name: Checking Required Variables
     fail: 
       msg: "We do not have a ppdm fqdn set !"
@@ -126,7 +120,7 @@
     include_role: 
       name: get_ppdm_inventory-sources
     vars:
-      filter: 'address eq "{{ vcenter_address }}"''
+      filter: 'address eq "{{ vcenter_address }}"'
     when: vcenter_address is defined
 
   - name: inventorysources Result summary
