@@ -6,7 +6,7 @@
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/inventory-sources"
   when: id  | default('', false) | trim == ''
-- name: Rewrite uri with filter
+- name: "Rewrite uri with filter: {{ filter }}"
   set_fact: 
     uri: "{{ uri }}?filter={{ filter | string | urlencode }}"  
 - name: Get PPDM inventory-sources with status {{ condition }}

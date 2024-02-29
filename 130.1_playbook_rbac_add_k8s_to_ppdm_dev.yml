@@ -118,7 +118,32 @@
         password: "{{ k8s_token }}"
         username: "ppdm-discovery-{{ k8s_fqdn }}"
     include_role:
-      name: create_ppdm_credentials    
+      name: create_ppdm_credentials  
+
+  - name: Get PPDM inventory-sources for "{{ vcenter_address }}""
+    include_role: 
+      name: get_ppdm_inventory-sources
+    vars:
+      filter: 'address eq "{{ vcenter_address }}"''
+    when: vcenter_address is defined
+
+  - debug:
+      msg: "{{ inventorysources  | json_query('[*].{name: name,id: id,type: type}') }}"
+      verbosity: 0   
+
+  - name: inventorysources Result summary
+    debug: 
+      msg: "{{ inventorysources | json_query('[*].{name: name,id: id,type: type}') }}"
+      verbosity: 0   
+    when: inventorysources is defined
+
+  - set_fact:
+    details:
+      k8s:
+        distributionType: VANILLA_ON_VSPHERE
+        vCenterID: {{ inventorysources.id }}
+    when: inventorysources is defined and vcenter_address is defined 
+
   - name: Ensure K8S Cluster {{ k8s_fqdn }} in Inventory
     when: details is defined
     vars:

@@ -1,0 +1,175 @@
+# Example Playbok to Add Kubernetes Cluster to PPDM
+- name: Add K8S to PPDM
+  hosts: localhost
+  gather_facts: no
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+  vars:  
+    k8s_policy_name: K8S_Protection 3hrs 3days    
+  tasks:
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have a ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Checking Required Variable ddve_fqdn
+    fail: 
+      msg: "We do not have ddve_fqdn  set !"
+    when: (ddve_fqdn is not defined) or (ddve_fqdn|length == 0)  
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get Protection Policy with filter
+    vars:
+      filter: 'name eq "{{ k8s_policy_name }}"'
+    include_role:
+      name: get_ppdm_protection_policy
+  - set_fact:
+      protection_policy: "{{ protection_policy[0] }}" 
+    when: protection_policy[0] is defined
+  - debug: 
+      msg: "{{ protection_policy }}"
+      verbosity: 0 
+
+  - name: Get DataDomain Storage Systems
+    include_role: 
+      name: get_ppdm_storage-systems
+    vars:
+      filter: type eq "DATA_DOMAIN_SYSTEM" & orderby = name ASC & name eq "{{ ddve_fqdn }}" 
+    when: protection_policy.id is not defined
+
+  - name: Create New Protection Policy
+    vars:
+      new_protection_policy:
+        id: 
+        name: "{{ k8s_policy_name }}"
+        description: 'This is a GTO Demo Kubernetes Protection Policy'
+        assetType: KUBERNETES
+        type: ACTIVE
+        category: CENTRALIZED_PROTECTION
+        targetStorageProvisionStrategy: AUTO_PROVISION
+        enabled: true
+        passive: false
+        forceFull: false
+        priority: 1
+        credentials:
+        encrypted: false
+        dataConsistency: CRASH_CONSISTENT
+        complianceInterval:
+        details:
+        stages:
+        - id: "{{ 1000 | random | to_uuid | upper }}" #99227db6-8bfc-38e1-d333-f63d740d2880
+          type: PROTECTION
+          passive: false
+          retention:
+            interval: 3
+            unit: DAY
+            storageSystemRetentionLock: false
+          extendedRetentions:
+          - retention:
+              interval: 3
+              unit: DAY
+              storageSystemRetentionLock: false
+            selector:
+              backupType: SYNTHETIC_FULL
+          target:
+            storageSystemId: "{{ storagesystems[0].id }}"
+            preferredInterfaceId: "{{ storagesystems[0].details.dataDomain.preferredInterfaces[0].networkName }}"
+          attributes:
+            protection: {}
+          operations:
+          - type: AUTO_FULL
+            schedule:
+              frequency: HOURLY
+              startTime: '2022-01-24T19:00:00Z'
+              duration: PT10H
+              interval: 3
+            backupType: SYNTHETIC_FULL
+        filterIds: []
+    include_role:
+      name: new_ppdm_protection_policy
+    when: protection_policy.id is not defined and (storagesystems[0] is defined)
+
+  - debug: 
+      msg: "{{ protection_policy }}"
+      verbosity: 0
+    when: protection_policy is defined #and (protection_policy.id is not defined)
+
+  - name: Get Protection rule with filter
+    vars:
+      filter: 'name eq "Kubernetes Namespace Label Rule {{ ppdm_rule }}"'
+#      filter: 'name eq "Kubernetes Namespace Label Rule ppdm_policy=PPDM_GOLD"'
+    include_role:
+      name: get_ppdm_protection_rules
+    when:   protection_policy.id is defined
+  - set_fact:
+      protection_rule: "{{ protection_rule[0] }}"
+    when: protection_rule[0].id is defined         
+  - debug: 
+      msg: "{{ protection_rule }}"
+      verbosity: 0    
+
+  - name: Create New Protection Rule
+    vars:
+      new_protection_rule:
+        name: Kubernetes Namespace Label Rule {{ ppdm_rule }}
+        category: COMPOUND
+        rules:
+        - category: PRIMITIVE
+          conditions:
+          - assetAttributeName: userTags
+            operator: EQUALS
+            assetAttributeValue: "{{ ppdm_rule }}"
+            assetAttributeValues:
+            - "{{ ppdm_rule }}"
+          conditionConnector: AND
+          logicalOperator: AND
+          inventorySourceType: KUBERNETES
+          priority: -1
+          tenant:
+            id: 00000000-0000-4000-a000-000000000000
+        action: MOVE_TO_GROUP
+        actionResult: "{{ protection_policy.id }}"
+        conditions:
+        - assetAttributeName: userTags
+          operator: EQUALS
+          assetAttributeValue: "{{ ppdm_rule }}"
+          assetAttributeValues:
+          - "{{ ppdm_rule }}"
+        conditionConnector: OR
+        logicalOperator: OR
+        inventorySourceType: KUBERNETES
+        priority: 1
+        tenant:
+          id: 00000000-0000-4000-a000-000000000000
+    include_role:
+      name: new_ppdm_protection_rule
+    when: protection_policy.id is defined and protection_rule.id is not defined
+  - debug: 
+      msg: "{{ protection_rule }}"
+      verbosity: 0    
+#    when: protection_policy.id is defined or (protection_rule is not defined and protection_policy[0].id is defined )
+  - name: Run Protection Rule
+    vars:
+      inventorySourceType: "{{ protection_rule.inventorySourceType }}"
+    include_role:
+      name: run_ppdm_protection_rule
+    when: protection_rule.inventorySourceType is defined
+  - debug: 
+      msg: "{{ protection_rule_run }}"
+      verbosity: 1
+    when: protection_rule.inventorySourceType is defined
+
