@@ -133,7 +133,7 @@
       details:
         k8s:
           distributionType: VANILLA_ON_VSPHERE
-          vCenterID: "{{ inventorysources.id }}"
+          vCenterID: "{{ inventorysources[0].id }}"
     when: inventorysources is defined and vcenter_address is defined 
 
   - name: Ensure K8S Cluster {{ k8s_fqdn }} in Inventory
