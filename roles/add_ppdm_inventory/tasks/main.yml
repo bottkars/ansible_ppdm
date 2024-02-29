@@ -32,7 +32,7 @@
   when: inventory is defined   
 - debug:
     msg: "{{ inventory }}"
-    verbosity: 0
+    verbosity: 1
   when: inventory is defined  
 
 - name: Add PPDM Inventory

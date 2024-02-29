@@ -170,4 +170,4 @@
       name: add_ppdm_inventory      
   - debug: 
       msg: "{{ inventory }}"
-      verbosity: 0        
+      verbosity: 0       

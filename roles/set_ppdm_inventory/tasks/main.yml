@@ -1,4 +1,4 @@
-- name: Update PPDM Inventory for {{ data.inventory.name }}
+- name: Update PPDM Inventory
   uri:
     method: PUT
     url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/inventory-sources/{{ id }}"
@@ -21,4 +21,4 @@
 
 - debug:
     msg: "{{ inventory }}"
-    verbosity: 0
+    verbosity: 1
