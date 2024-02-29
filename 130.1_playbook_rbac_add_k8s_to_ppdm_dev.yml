@@ -10,7 +10,9 @@
     - ./vars/main.yml
   collections:
    - kubernetes.core     
-  tasks:
+  vars: 
+    vcenter_address: (lookup(en))
+  tasks:  
 #  - name: install pre-requisites
 #    pip:
  #     name:
@@ -126,10 +128,6 @@
     vars:
       filter: 'address eq "{{ vcenter_address }}"''
     when: vcenter_address is defined
-
-  - debug:
-      msg: "{{ inventorysources  | json_query('[*].{name: name,id: id,type: type}') }}"
-      verbosity: 0   
 
   - name: inventorysources Result summary
     debug: 
