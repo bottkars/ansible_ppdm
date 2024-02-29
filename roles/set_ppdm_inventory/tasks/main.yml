@@ -21,4 +21,4 @@
 
 - debug:
     msg: "{{ inventory }}"
-    verbosity: 1
+    verbosity: 0
