@@ -122,7 +122,7 @@
     include_role:
       name: create_ppdm_credentials  
 
-  - name: Get PPDM inventory-sources for "{{ vcenter_address }}""
+  - name: Get PPDM inventory-sources for "{{ vcenter_address }}"
     include_role: 
       name: get_ppdm_inventory-sources
     vars:
