@@ -23,7 +23,7 @@
 #    stripping data
     inventory: "{% set copy=inventory.copy() %}{% set removed=copy.pop('_links') %}{{ copy }}"
   when: inventory.id is defined
-- name: "Update PPDM Inventory for {{ inventory.id }}"
+- name: "Update PPDM Inventory for {{ inventory.name }}"
   vars:
     data:  "{{ inventory }}"
     id: "{{ inventory.id }}"
