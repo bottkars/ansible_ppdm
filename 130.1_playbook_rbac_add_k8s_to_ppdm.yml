@@ -125,7 +125,7 @@
 
   - name: inventorysources Result summary
     debug: 
-      msg: "{{ inventorysources | json_query('[*].{name: name,id: id,type: type}') }}"
+      msg: "{{ inventorysources | json_query('[0].{name: name,id: id,type: type}') }}"
       verbosity: 0   
     when: inventorysources is defined
 
@@ -133,7 +133,7 @@
       details:
         k8s:
           distributionType: VANILLA_ON_VSPHERE
-          vCenterID: "{{ inventorysources[0].id }}"
+          vCenterId: "{{ inventorysources[0].id }}"
     when: inventorysources is defined and vcenter_address is defined 
 
   - name: Ensure K8S Cluster {{ k8s_fqdn }} in Inventory
@@ -152,7 +152,7 @@
       delay: 30      
     include_role:
       name: add_ppdm_inventory
-  - name: Ensure K8S Cluster {{ k8s_fqdn }} in Inventory
+  - name: Ensure K8S Cluster {{ k8s_fqdn }} in Inventory without detail
     when: details is not defined
     vars:
       data:
