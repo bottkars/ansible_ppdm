@@ -15,10 +15,9 @@
   delay: "{{ delay }}"
   until: result.status <= 300 
   when: not ansible_check_mode 
-- set_fact:
-#    inventory: "{{ result.json }}"
+- name: Setting Inventory fact from Role
+  set_fact:
     inventory: "{% set copy=result.json.copy() %}{% set removed=copy.pop('_links') %}{{ copy }}"
-
 - debug:
     msg: "{{ inventory }}"
     verbosity: 1

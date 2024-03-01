@@ -129,7 +129,8 @@
       verbosity: 0   
     when: inventorysources is defined
 
-  - set_fact:
+  - name: Setting vCenter Details
+    set_fact:
       details:
         k8s:
           distributionType: VANILLA_ON_VSPHERE
