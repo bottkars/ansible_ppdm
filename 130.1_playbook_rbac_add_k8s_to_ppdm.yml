@@ -136,7 +136,7 @@
           vCenterId: "{{ inventorysources[0].id }}"
     when: inventorysources is defined and vcenter_address is defined 
 
-  - name: Ensure K8S Cluster {{ k8s_fqdn }} in Inventory
+  - name: Ensure K8S Cluster {{ k8s_fqdn }} in Inventory with vCenter Details ( CSI Drivers as a Process )
     when: details is defined
     vars:
       data:
@@ -152,7 +152,7 @@
       delay: 30      
     include_role:
       name: add_ppdm_inventory
-  - name: Ensure K8S Cluster {{ k8s_fqdn }} in Inventory without detail
+  - name: Ensure K8S Cluster {{ k8s_fqdn }} in Inventory without vCenter Detail
     when: details is not defined
     vars:
       data:
