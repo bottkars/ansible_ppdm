@@ -56,3 +56,9 @@
       name: run_ppdm_discoveries
     vars:
       inventorySource: "{{ inventorysources[0].id }}"
+
+  - name: Discoveries Result Short
+    debug: 
+      msg: "{{ discoveries | json_query('{name: name,taskId: taskId,level: level}') }}"
+      verbosity: 0   
+    when: discoveries is defined
