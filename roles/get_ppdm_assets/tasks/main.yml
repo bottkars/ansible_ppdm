@@ -34,4 +34,4 @@
   when: id  | default('', true) | trim != '' and result.json is defined     
 - debug:
     msg: "{{ assets }}"
-    verbosity: 0    
+    verbosity: 1    
