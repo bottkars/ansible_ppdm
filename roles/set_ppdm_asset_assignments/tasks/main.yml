@@ -7,9 +7,9 @@
     headers:
       accept: application/json
       authorization: "Bearer {{ access_token }}"    
-    status_code: 200,201,202,500
+    status_code: 200,201,202,204,500
     validate_certs: false
   register: result  
   when: not ansible_check_mode 
 - set_fact:
-    asset_assignments: "{{ result.json }}"
+    asset_assignments: "{{ result }}"
