@@ -55,4 +55,9 @@
       verbosity: 0   
     when: assets is defined
 
-
+  - name: build asset LIST
+    set_fact:
+      asset_list: "{{ assets | json_query('[*].{id: id}') }}"
+  - debug: 
+      msg: "{{ asset_list }}"
+      verbosity: 0
