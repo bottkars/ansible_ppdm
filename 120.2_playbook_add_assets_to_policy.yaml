@@ -57,7 +57,7 @@
 
   - name: "Set PPDM Asset Assignments for {{ ppdm_policy }}"
     vars:
-      asset_list: "{{ assets | json_query('[*].id') }}"
+      asset_list: "{{ assets | json_query('[*].id')  | join(',')  }}"
       id: protection_policy.Id
     include_role: 
       name: set_ppdm_asset_assignments
