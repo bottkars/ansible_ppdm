@@ -1,0 +1,76 @@
+vars:
+  debug_enabled: false
+  excludeSystemDatabase: true
+  policy_name: 
+  data:
+    name: "{{ policy_name }}"
+    description: "{{ Description }}"
+    assetType: MICROSOFT_SQL_DATABASE
+    type: ACTIVE
+    encrypted: false
+    enabled: true
+    priority: 1
+    dataConsistency: APPLICATION_CONSISTENT
+    passive: false
+    forceFull: false
+    details: 
+    stages:
+    - id: "{{ 1000 | random | to_uuid | upper }}"
+      type: PROTECTION
+      passive: false
+      attributes:
+        mssql:
+          troubleShootingOption: "debugEnabled={{ debug_enabled }}"
+          excludeSystemDatabase: "{{ excludeSystemDatabase }}"
+      target:
+        storageSystemId: aa0b484c-8f1e-4749-99c1-91f3611ab3b1
+        dataTargetId: 
+        preferredInterfaceId: ethV0
+      slaId: 
+      sourceStageId: 
+      operations:
+      - id: 7bd099f0-a16b-33a3-8471-0c053db9d49c
+        backupType: FULL
+        schedule:
+          frequency: DAILY
+          startTime: '2024-02-26T19:00:00.000Z'
+          duration: PT10H
+          interval: 
+      - id: 4c2dc5da-5ff0-0727-967f-14cb5c93fb16
+        backupType: LOG
+        schedule:
+          frequency: HOURLY
+          startTime: '2024-02-26T19:00:00.000Z'
+          duration: PT10H
+          interval: 3
+      retention:
+        id: 92a5ee68-2729-28d3-ddf5-88ac6f27aa53
+        unit: DAY
+        storageSystemRetentionLock: false
+        interval: 4
+      extendedRetentions:
+      - selector:
+          operationId: 7bd099f0-a16b-33a3-8471-0c053db9d49c
+          backupType: FULL
+        retention:
+          id: f074d507-66c6-7609-580c-54aa3a25938b
+          storageSystemRetentionLock: false
+          unit: DAY
+          interval: 4
+      - selector:
+          operationId: 4c2dc5da-5ff0-0727-967f-14cb5c93fb16
+          backupType: LOG
+        retention:
+          id: 21a3612d-befa-ad24-97bd-d768497f260f
+          storageSystemRetentionLock: false
+          unit: DAY
+          interval: 4
+      options:
+        skipUnprotectableState: true
+        skipSimpleDatabase: true
+        promotionType: ALL
+    filterIds: []
+    credentials:
+      id: 2511db3a-5cd4-4463-b745-4facbe5169f2
+      type: OS
+    slaId: ''

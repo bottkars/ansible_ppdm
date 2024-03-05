@@ -1,0 +1,59 @@
+
+systemStateRecoveryOnly: false
+ignoreMissingSystemStateFiles: true
+excludeNonCriticalDynamicDisks: false
+ignoreThirdPartyServices: false
+debugEnabled: "false"
+name: "{{ 1000 | random | to_uuid | upper }}"
+storage: 
+data_template:
+    name: "{{ name }}"
+    description: "{{ description }}"
+    assetType: FILE_SYSTEM
+    type: ACTIVE
+    encrypted: false
+    enabled: true
+    priority: 1
+    dataConsistency: CRASH_CONSISTENT
+    passive: false
+    forceFull: false
+    details: 
+    stages:
+    - id: "{{ 1000 | random | to_uuid | upper }}"
+      type: PROTECTION
+      passive: false
+      attributes:
+        protection:
+          backupMechanism: AUTO
+        fileSystem:
+          troubleShootingOption: "debugEnabled={{ debugEnabled }}"
+      target:
+        storageSystemId: "{{ storageSystemId }}"
+        dataTargetId: 
+        preferredInterfaceId: "{{ preferredInterfaceId }}"
+      operations:
+      - id: "{{ 1000 | random | to_uuid | upper }}"
+        backupType: SYNTHETIC_FULL
+        schedule:
+          frequency: DAILY
+          duration: PT10H
+          startTime: '2022-01-24T19:00:00Z'
+          interval: 
+      retention:
+        unit: DAY
+        storageSystemRetentionLock: false
+        interval: 3
+      extendedRetentions:
+      - selector:
+          backupType: SYNTHETIC_FULL
+        retention:
+          storageSystemRetentionLock: false
+          unit: DAY
+          interval: 3
+      options:
+        systemStateRecoveryOnly: "{{ systemStateRecoveryOnly }}"
+        ignoreMissingSystemStateFiles: "{{ ignoreMissingSystemStateFiles }}"
+        excludeNonCriticalDynamicDisks: "{{ excludeNonCriticalDynamicDisks }}"
+        ignoreThirdPartyServices: "{{ ignoreThirdPartyServices }}"
+    filterIds: []
+    slaId: ''

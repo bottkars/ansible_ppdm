@@ -1,0 +1,75 @@
+# Example Playbok to Add Kubernetes Cluster to PPDM
+- name: Add Filesystem Policy
+  hosts: localhost
+  gather_facts: no
+  connection: local
+  vars_files: 
+    - ./vars/main.yml
+    - ./templates/file_policy_template.yaml
+  vars:  
+    policy_name: "Filesystem_Bob"    
+  tasks:
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have a ppdm fqdn set !"
+    when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
+  - name: Checking Required Variables
+    fail: 
+      msg: "We do not have ppdm_new_password  set !"
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
+  - name: Checking Required Variable ddve_fqdn
+    fail: 
+      msg: "We do not have ddve_fqdn  set !"
+    when: (ddve_fqdn is not defined) or (ddve_fqdn|length == 0)  
+  - name: Setting Base URL
+    set_fact: 
+      ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"   
+  - name: Get PPDM Token for https://{{ ppdm_fqdn | regex_replace('^https://') }}
+    include_role: 
+      name: get_ppdm_token
+    vars: 
+      ppdm_password: "{{ ppdm_new_password }}"
+  - debug: 
+      msg: "{{ access_token }}"
+      verbosity: 1
+    name: do we have a token ?  
+  - name: Get Protection Policy with filter
+    vars:
+      filter: 'name eq "{{ policy_name }}"'
+    include_role:
+      name: get_ppdm_protection_policy
+  - set_fact:
+      protection_policy: "{{ protection_policy[0] }}" 
+    when: protection_policy[0] is defined
+  - debug: 
+      msg: "{{ protection_policy }}"
+      verbosity: 0 
+
+  - name: Get DataDomain Storage Systems
+    include_role: 
+      name: get_ppdm_storage-systems
+    vars:
+      filter: type eq "DATA_DOMAIN_SYSTEM" & orderby = name ASC & name eq "{{ ddve_fqdn }}" 
+    when: protection_policy.id is not defined
+
+  - name: Create New Protection Policy
+    vars:
+      name: "{{ policy_name }}"
+      description: "Demo FS Policy for Bob 2024"
+      systemStateRecoveryOnly: false
+      ignoreMissingSystemStateFiles: true
+      excludeNonCriticalDynamicDisks: false
+      ignoreThirdPartyServices: false
+      debugEnabled: "false"    
+      storageSystemId: "{{ storagesystems[0].id }}"
+      preferredInterfaceId: "{{ storagesystems[0].details.dataDomain.preferredInterfaces[0].networkName }}"
+      new_protection_policy: "{{ data_template }}"  
+    include_role:
+      name: new_ppdm_protection_policy
+    when: protection_policy.id is not defined and (storagesystems[0] is defined)
+
+  - debug: 
+      msg: "{{ protection_policy }}"
+      verbosity: 0
+    when: protection_policy is defined #and (protection_policy.id is not defined)
+
