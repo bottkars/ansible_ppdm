@@ -55,9 +55,15 @@
       verbosity: 0   
     when: assets is defined
 
-  - name: build asset LIST
-    set_fact:
+  - name: "Set PPDM Asset Assignments for {{ ppdm_policy }}"
+    vars:
       asset_list: "{{ assets | json_query('[*].id') }}"
+      id: protection_policy.Id
+    include_role: 
+      name: set_ppdm_asset_assignments
+
   - debug: 
-      msg: "{{ asset_list }}"
-      verbosity: 0
+      msg: "{{ asset_assignments }}"
+      verbosity: 0 
+
+      
