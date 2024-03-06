@@ -5,10 +5,14 @@
   connection: local
   vars:  
     policy_name: 
-    policy_type:
+    policy_type: # one of VMWARE_VIRTUAL_MACHINE,ORACLE_DATABASE,MICROSOFT_SQL_DATABASE,FILE_SYSTEM,KUBERNETES,MICROSOFT_EXCHANGE_DATABASE,SAP_HANA_DATABASE,NAS_SHARE,POWERSTORE_BLOCK
   vars_files: 
     - ./vars/main.yml
   tasks:
+  - name: Checking Required Variable me
+    fail: 
+      msg: "We do not have a ppdm fqdn set !"
+    when: (policy_name is not defined) or (policy_name not in (VMWARE_VIRTUAL_MACHINE,ORACLE_DATABASE,MICROSOFT_SQL_DATABASE,FILE_SYSTEM,KUBERNETES,MICROSOFT_EXCHANGE_DATABASE,SAP_HANA_DATABASE,NAS_SHARE,POWERSTORE_BLOCK))  
   - name: Checking Required Variables
     fail: 
       msg: "We do not have a ppdm fqdn set !"
