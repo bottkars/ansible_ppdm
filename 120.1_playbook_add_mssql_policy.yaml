@@ -1,13 +1,16 @@
-# Example Playbok to Add Filesystem Policy to PPDM
-- name: Add Filesystem Policy
+# Example Playbok to Add SQL Policy to PPDM
+- name: Add SQL Policy
   hosts: localhost
   gather_facts: no
   connection: local
   vars_files: 
     - ./vars/main.yml
-    - ./templates/file_policy_template.yaml
+    - ./templates/sql_policy_template.yaml
   vars:  
-    policy_name: "Filesystem_Bob"    
+    policy_name: "SQL_Bob"
+    app_credentials_username: 'bob sql demouser'
+    app_credentials_name: 'svc_sql@demo.local'
+    app_credentials_password: 'Password123!'    
   tasks:
   - name: Checking Required Variables
     fail: 
@@ -44,6 +47,15 @@
   - debug: 
       msg: "{{ protection_policy }}"
       verbosity: 0 
+  - name: "Ensure ApplicationCredentials {{ app_credentials_name }}"
+    vars:
+      data:
+        name: "{{ app_credentials_name }}"
+        type: "OS"        
+        password: "{{ app_credentials_password }}"
+        username: "{{ app_credentials_username }}"
+    include_role:
+      name: create_ppdm_credentials  
 
   - name: Get DataDomain Storage Systems
     include_role: 
@@ -55,15 +67,12 @@
   - name: Create New Protection Policy
     vars:
       name: "{{ policy_name }}"
-      description: "Demo FS Policy for Bob 2024"
-      systemStateRecoveryOnly: false
-      ignoreMissingSystemStateFiles: true
-      excludeNonCriticalDynamicDisks: false
-      ignoreThirdPartyServices: false
+      description: "Demo SQL Policy for Bob 2024"
       debugEnabled: "false"    
       storageSystemId: "{{ storagesystems[0].id }}"
       preferredInterfaceId: "{{ storagesystems[0].details.dataDomain.preferredInterfaces[0].networkName }}"
-      new_protection_policy: "{{ data_template }}"  
+      new_protection_policy: "{{ data_template }}"
+      credentials_id: "{{ credentials.id }}"  
     include_role:
       name: new_ppdm_protection_policy
     when: protection_policy.id is not defined and (storagesystems[0] is defined)
