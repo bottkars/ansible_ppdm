@@ -29,7 +29,6 @@ data_template:
         troubleShootingOption: "debugEnabled={{ debugEnabled }}"
     target:
       storageSystemId: "{{ storageSystemId }}"
-      dataTargetId: "{{ dataTargetId }}"
       preferredInterfaceId: "{{ preferredInterfaceId }}"
     operations:
     - id: "{{ 1000 | random | to_uuid | upper }}"

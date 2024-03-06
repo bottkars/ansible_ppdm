@@ -25,7 +25,6 @@ data_template:
         excludeSystemDatabase: "{{ excludeSystemDatabase }}"
     target:
       storageSystemId: "{{ storageSystemId }}"
-#      dataTargetId: "{{ dataTargetId  | default('') }}"
       preferredInterfaceId: "{{ preferredInterfaceId }}"
     slaId: 
     sourceStageId: 
