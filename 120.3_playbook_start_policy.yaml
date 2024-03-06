@@ -9,13 +9,17 @@
   vars_files: 
     - ./vars/main.yml
   tasks:
-  - name: Checking Required Variable me
+  - name: Checking Required Variable policy_type
     fail: 
-      msg: "We do not have a ppdm fqdn set !"
-    when: (policy_name is not defined) or (policy_name not in (VMWARE_VIRTUAL_MACHINE,ORACLE_DATABASE,MICROSOFT_SQL_DATABASE,FILE_SYSTEM,KUBERNETES,MICROSOFT_EXCHANGE_DATABASE,SAP_HANA_DATABASE,NAS_SHARE,POWERSTORE_BLOCK))  
-  - name: Checking Required Variables
+      msg: "We do not have a policy_type set or policy_type not one of VMWARE_VIRTUAL_MACHINE,ORACLE_DATABASE,MICROSOFT_SQL_DATABASE,FILE_SYSTEM,KUBERNETES,MICROSOFT_EXCHANGE_DATABASE,SAP_HANA_DATABASE,NAS_SHARE,POWERSTORE_BLOCK!"
+    when: (policy_type is not defined) or (policy_type not in ("VMWARE_VIRTUAL_MACHINE","ORACLE_DATABASE","MICROSOFT_SQL_DATABASE","FILE_SYSTEM","KUBERNETES","MICROSOFT_EXCHANGE_DATABASE","SAP_HANA_DATABASE","NAS_SHARE","POWERSTORE_BLOCK"))  
+  - name: Checking Required Variable policy_name
     fail: 
-      msg: "We do not have a ppdm fqdn set !"
+      msg: "We do not have a policy_name set !"
+    when: (policy_name is not defined) or (policy_name|length == 0)
+  - name: Checking Required Variable ppdm_fqdn
+    fail: 
+      msg: "We do not have a ppdm_fqdn set !"
     when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
   - name: Checking Required Variables
     fail: 
@@ -41,7 +45,7 @@
     include_role: 
       name: get_ppdm_protection_policy
     vars:
-      filter: assetType eq "{{ policy_type }}" & name eq "{{ policy_name }}" 
+      filter: assetType eq "{{ policy_type }}" and name eq "{{ policy_name }}" 
   - name: Run Protection Policy
     vars:
       policy_id: "{{ protection_policy[0].id }}"

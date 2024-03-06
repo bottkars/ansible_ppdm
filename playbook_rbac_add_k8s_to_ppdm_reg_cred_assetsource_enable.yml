@@ -11,9 +11,9 @@
   collections:
    - kubernetes.core     
   tasks:
-  - name: Checking Required Variables
+  - name: Checking Required Variable ppdm_fqdn
     fail: 
-      msg: "We do not have a ppdm fqdn set !"
+      msg: "We do not have ppdm_fqdn set !"
     when: (ppdm_fqdn is not defined) or (ppdm_fqdn|length <= 8)
   - name: Checking Required Variables
     fail: 
