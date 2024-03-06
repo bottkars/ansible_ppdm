@@ -9,7 +9,7 @@
   vars:  
     policy_name: "SQL_Bob"
     app_credentials_username: 'bob sql demouser'
-    app_credentials_name: 'svc_sql@demo.local'
+    app_credentials_name: 'sql_service@demo.local'
     app_credentials_password: 'Password123!'    
   tasks:
   - name: Checking Required Variable ppdm_fqdn
