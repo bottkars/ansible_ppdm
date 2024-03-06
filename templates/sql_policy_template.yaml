@@ -24,9 +24,9 @@ data_template:
         troubleShootingOption: "debugEnabled={{ debugEnabled }}"
         excludeSystemDatabase: "{{ excludeSystemDatabase }}"
     target:
-      storageSystemId: aa0b484c-8f1e-4749-99c1-91f3611ab3b1
-      dataTargetId: 
-      preferredInterfaceId: ethV0
+      storageSystemId: "{{ storageSystemId }}"
+      dataTargetId: "{{ dataTargetId }}"
+      preferredInterfaceId: "{{ preferredInterfaceId }}"
     slaId: 
     sourceStageId: 
     operations:
