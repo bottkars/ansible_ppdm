@@ -42,7 +42,13 @@
       script: |
         USE [master]
         GO
-        CREATE LOGIN [{{ ansible_hostname }}\sql_service_local] FROM WINDOWS WITH DEFAULT_DATABASE=[master]
+        IF NOT EXISTS 
+          (SELECT name  
+            FROM master.sys.server_principals
+                WHERE name = '{{ ansible_hostname }}\sql_service_local')
+        BEGIN
+            CREATE LOGIN [{{ ansible_hostname }}\sql_service_local] FROM WINDOWS WITH DEFAULT_DATABASE=[master]
+        END
         GO
         ALTER SERVER ROLE [sysadmin] ADD MEMBER [{{ ansible_hostname }}\sql_service_local]
         GO
