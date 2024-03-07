@@ -11,7 +11,7 @@
     app_credentials_name: 'bob demouser sql'
     app_credentials_password: 'Password123!'         
   tasks:
-  - name: Ensure user bob is present
+  - name: "Ensure user {{ app_credentials_username }} is present"
     ansible.windows.win_user:
       name: "{{ app_credentials_username }}"
       password: "{{ app_credentials_password }}"
