@@ -11,7 +11,7 @@
     app_credentials_name: 'bob demouser sql'
     app_credentials_password: 'Password123!'
     mssql_port: 1433
-    mssql_user: "Demo\Administrator"        
+    mssql_user: "Demo\\Administrator"        
   tasks:
   - name: "Ensure user {{ app_credentials_username }} is present"
     ansible.windows.win_user:
