@@ -23,7 +23,7 @@
       name: get_ppdm_components
   - debug:
       msg: "{{ components.content }}"
-    verbosity: 0  
+      verbosity: 0  
 
 
 
