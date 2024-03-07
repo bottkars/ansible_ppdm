@@ -26,7 +26,7 @@
     community.general.mssql_script:
       login_user: "{{ ansible_user }}"
       login_password: "{{ansible_password }}"
-      login_host: "{{ ansible_fqdn }}"
+      login_host: "{{ ansible_hostname }}"
       login_port: "{{ mssql_port }}"
       db: master
       script: "SELECT 1"
