@@ -10,7 +10,7 @@
     app_credentials_username: 'sql_service_local'
     app_credentials_name: 'bob demouser sql'
     app_credentials_password: 'Password123!'
-    mssql_port:         
+    mssql_port: 1433        
   tasks:
   - name: "Ensure user {{ app_credentials_username }} is present"
     ansible.windows.win_user:
@@ -27,6 +27,6 @@
       login_user: "{{ ansible_user }}"
       login_password: "{{ansible_password }}"
       login_host: "{{ ansible_fqdn }}"
-      login_port: "{{ mssql_port | default('1433') }}"
+      login_port: "{{ mssql_port }}"
       db: master
       script: "SELECT 1"
