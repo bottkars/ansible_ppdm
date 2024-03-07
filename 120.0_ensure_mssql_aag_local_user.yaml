@@ -31,3 +31,19 @@
       login_port: "{{ mssql_port }}"
       db: master
       script: "SELECT 1"
+  - name: Ensure User Login
+    delegate_to: localhost
+    community.general.mssql_script:
+      login_user: "{{ mssql_user }}"
+      login_password: "{{ansible_password }}"
+      login_host: "{{ ansible_hostname }}"
+      login_port: "{{ mssql_port }}"
+      db: master
+      script: |
+        USE [master]
+        GO
+        CREATE LOGIN [SQL01\sql_service_local] FROM WINDOWS WITH DEFAULT_DATABASE=[master]
+        GO
+        ALTER SERVER ROLE [sysadmin] ADD MEMBER [SQL01\sql_service_local]
+        GO
+            
