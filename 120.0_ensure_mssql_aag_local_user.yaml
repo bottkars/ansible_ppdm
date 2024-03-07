@@ -6,7 +6,6 @@
   vars_files: 
     - ./vars/main.yml
     - ./vars/agents_vars.yaml
-    - "{{ agent_src }}/agents.yaml"
   vars:
     app_credentials_username: 'sql_service_local'
     app_credentials_name: 'bob demouser sql'
