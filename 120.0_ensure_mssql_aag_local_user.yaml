@@ -1,0 +1,22 @@
+# Example Playbook for local AAG User
+- name: Ensure Local User for SQL
+  hosts: windows
+  vars:
+   agent_src: /tmp
+  vars_files: 
+    - ./vars/main.yml
+    - ./vars/agents_vars.yaml
+    - "{{ agent_src }}/agents.yaml"
+  vars:
+    app_credentials_username: 'sql_service_local'
+    app_credentials_name: 'bob demouser sql'
+    app_credentials_password: 'Password123!'         
+  tasks:
+  - name: Ensure user bob is present
+    ansible.windows.win_user:
+      name: "{{ app_credentials_username }}"
+      password: "{{ app_credentials_password }}"
+      state: present
+      groups:
+        - Users
+        - Administrators

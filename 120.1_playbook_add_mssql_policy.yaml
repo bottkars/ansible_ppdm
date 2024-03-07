@@ -8,7 +8,7 @@
     - ./templates/sql_policy_template.yaml
   vars:  
     policy_name: "SQL_Bob"
-    app_credentials_username: 'sql_service@demo.local'
+    app_credentials_username: 'sql_service_local'
     app_credentials_name: 'bob demouser sql'
     app_credentials_password: 'Password123!'    
   tasks:
