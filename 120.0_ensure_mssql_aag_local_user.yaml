@@ -10,7 +10,8 @@
     app_credentials_username: 'sql_service_local'
     app_credentials_name: 'bob demouser sql'
     app_credentials_password: 'Password123!'
-    mssql_port: 1433        
+    mssql_port: 1433
+    mssql_user: "Demo\Administrator"        
   tasks:
   - name: "Ensure user {{ app_credentials_username }} is present"
     ansible.windows.win_user:
@@ -24,7 +25,7 @@
   - name: Check DB connection
     delegate_to: localhost
     community.general.mssql_script:
-      login_user: "{{ ansible_user }}"
+      login_user: "{{ mssql_user }}"
       login_password: "{{ansible_password }}"
       login_host: "{{ ansible_hostname }}"
       login_port: "{{ mssql_port }}"
