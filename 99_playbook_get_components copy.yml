@@ -21,9 +21,9 @@
   - name: Get PPDM Components
     import_role: 
       name: get_ppdm_components
-  - debug:
-      msg: "{{ components.content }}"
-    verbosity: 0  
+    retries: 40
+    delay: 300
+    until: components.content == "0"
 
 
 
