@@ -22,7 +22,7 @@
     import_role: 
       name: get_ppdm_components
   - debug:
-      msg: "{{ components.content }}"
+      msg: "{{ components.content | json_query('[*].{name: componentDisplayName,status: status,type: componentType }') }}"
       verbosity: 0  
 
 
