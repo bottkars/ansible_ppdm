@@ -14,10 +14,6 @@
     fail: 
       msg: "We do not have ppdm_new_password  set !"
     when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)    
-  - name: Checking Required Variables
-    fail: 
-      msg: "We do not have ppdm_setup_password  set !"
-    when: (ppdm_setup_password is not defined) or (ppdm_setup_password|length == 0)      
   - name: Setting Base URL
     set_fact: 
       ppdm_baseurl: "https://{{ ppdm_fqdn | regex_replace('^https://') }}"  
