@@ -13,11 +13,7 @@
   - name: Checking Required Variables
     fail: 
       msg: "We do not have ppdm_new_password  set !"
-    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
-  - name: Checking Required Variable ppdm_timeZone
-    fail: 
-      msg: "We do not have ppdm_timeZone  set !"
-    when: (ppdm_timeZone is not defined) or (ppdm_timeZone|length == 0)        
+    when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)    
   - name: Checking Required Variables
     fail: 
       msg: "We do not have ppdm_setup_password  set !"
