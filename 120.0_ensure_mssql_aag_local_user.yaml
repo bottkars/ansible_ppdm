@@ -22,6 +22,7 @@
         - Administrators
 
   - name: Check DB connection
+    delegate_to: localhost
     community.general.mssql_script:
       login_user: "{{ ansible_user }}"
       login_password: "{{ansible_password }}"
