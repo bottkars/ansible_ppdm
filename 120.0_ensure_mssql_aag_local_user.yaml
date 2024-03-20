@@ -1,8 +1,6 @@
 # Example Playbook for local AAG User
 - name: Ensure Local User for SQL
   hosts: windows
-  vars:
-   agent_src: /tmp
   vars_files: 
     - ./vars/main.yml
     - ./vars/agents_vars.yaml
