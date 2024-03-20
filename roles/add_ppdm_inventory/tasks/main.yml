@@ -11,7 +11,7 @@
     name: get_ppdm_inventory-sources
   vars:
     filter: "{{ filterstring }}"
-  when: filter is defined
+  when: filterstring is defined
 
 - name: Setting Inventory Fact from Add Inventory
   set_fact:

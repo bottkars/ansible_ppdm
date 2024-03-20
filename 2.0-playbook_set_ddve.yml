@@ -69,11 +69,11 @@
     include_role:
       name: create_ppdm_credentials 
     when: credentials.id is not defined
-  - name: Get DataDomain Inventory Sources
-    include_role: 
-      name: get_ppdm_inventory-sources
-    vars:
-      filter: type eq "EXTERNALDATADOMAIN" & orderby = name ASC & name eq "{{ ddve_fqdn }}"          
+#  - name: Get DataDomain Inventory Sources
+#    include_role: 
+#      name: get_ppdm_inventory-sources
+#    vars:
+#      filterstring: type eq "EXTERNALDATADOMAIN" & orderby = name ASC & name eq "{{ ddve_fqdn }}"          
   - name: Add Datadomain to Inventory
     vars:
       retries: 20
@@ -88,6 +88,10 @@
     include_role:
       name: add_ppdm_inventory
     when: inventorysources[0].id is not defined
-
+  - name: sucess
+    debug:
+      msg: "{{ inventory }}"
+      verbosity: 0
+    when: inventory is defined    
 
      
