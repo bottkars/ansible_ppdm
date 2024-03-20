@@ -34,7 +34,7 @@
     include_role: 
       name: get_ppdm_storage-systems
     vars:
-      filter: type eq "DATA_DOMAIN_SYSTEM" and orderby name ASC and name eq "{{ ddve_fqdn }}" 
+      filter: type eq "DATA_DOMAIN_SYSTEM" and name eq "{{ ddve_fqdn }}" 
   - name: Extract SDR Config ID
     set_fact: 
       sdr_configuration_id: "{{ item.value }}"
