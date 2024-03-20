@@ -26,7 +26,7 @@
     include_role: 
       name: get_ppdm_inventory-sources
     vars:
-      filter: type eq "VCENTER" & orderby = name ASC & name eq "vcsa1.home.labbuildr.com"
+      filter: type eq "VCENTER" and orderby = name ASC and name eq "vcsa1.home.labbuildr.com"
  
   - name: Get PPDM vib-details
     include_role: 

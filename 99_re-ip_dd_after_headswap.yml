@@ -30,7 +30,7 @@
     include_role: 
       name: get_ppdm_inventory-sources
     vars:
-      filter: address eq "{{ old_address }}" & type eq "EXTERNALDATADOMAIN" 
+      filter: address eq "{{ old_address }}" and type eq "EXTERNALDATADOMAIN" 
   - name: creating configurations
     set_fact:
 ## prior 19.7, we published _links ....      new_config: "{% set copy=configuration.content[0].copy() %}{% set removed=copy.pop('_links') %}{{ copy }}"

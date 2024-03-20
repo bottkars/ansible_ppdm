@@ -71,7 +71,7 @@
     include_role: 
       name: get_ppdm_inventory-sources
     vars:
-      filter: type eq "VCENTER" & orderby = name ASC & name eq "{{ vcenter_fqdn }}"     
+      filter: type eq "VCENTER" and orderby = name ASC and name eq "{{ vcenter_fqdn }}"     
 
   - name: Add VCENTER {{ vcenter_fqdn }} to Inventory
     vars:        
