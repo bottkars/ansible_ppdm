@@ -38,7 +38,7 @@
     when: item.name == 'configId'
   - name: Extract SDR Repository ID for existing Repository
     set_fact: 
-      ExstingrepositoryPath: "{{ item.value }}"
+      repositoryPath: "{{ item.value }}"
     with_items: 
         - "{{ sdr_configuration.properties }}"
     when: item.name == 'repositoryPath'
@@ -56,10 +56,10 @@
         backupsEnabled: true
         id: "{{ sdr_configuration_id }}"
         repositoryHost: "{{ storagesystems[0].id }}"
-        repositoryPath: "{{ ExistingrepositoryPath }}"
+        repositoryPath: "{{ repositoryPath }}"
         credentialId: "{{ credentialId }}"
         repositoryFilesystem: "BOOST_FILE_SYSTEM"
         type: "DATA_DOMAIN_SYSTEM"
-
+        
     when:             
         
