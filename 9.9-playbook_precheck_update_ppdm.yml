@@ -22,7 +22,15 @@
       msg: "{{ access_token }}"
       verbosity: 1
     name: do we have a token ?  
-
+  - name: get Update Package
+    include_role: 
+      name: get_ppdm_update_package
+    vars:
+      filter: 'category eq "ACTIVE"' 
+  - name: display Failure
+    debug:
+      msg: "{{ update_package[0].upgradeError }}"
+    when: update_package[0] is defined and update_package[0].upgradeError is defined
 #    include_role: 
 #      name: delete_ppdm_update_package
 #    vars:
@@ -36,15 +44,18 @@
   - debug:
       msg: "{{ validation_details }}"
       verbosity: 0
-    when: validation_details is defined        
-     
+    when: validation_details is defined
+
   - name: get Update Package
     include_role: 
       name: get_ppdm_update_package
     vars:
       filter: 'category eq "ACTIVE"' 
+    when: update_package[0] is defined and update_package[0].upgradeError is defined
+     
   - name: display Failure
     debug:
       msg: "{{ update_package[0].upgradeError }}"
     when: update_package[0] is defined and update_package[0].upgradeError is defined
     failed_when: update_package[0] is defined and update_package[0].upgradeError is defined
+     
