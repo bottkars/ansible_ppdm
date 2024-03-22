@@ -22,12 +22,12 @@
       msg: "{{ access_token }}"
       verbosity: 1
     name: do we have a token ?  
-  - name: get Update Package
+  - name: get Update Package vbefor precheck
     include_role: 
       name: get_ppdm_update_package
     vars:
       filter: 'category eq "ACTIVE"' 
-  - name: display Failure
+  - name: display upgrade package failure prior precheck
     debug:
       msg: "{{ update_package[0].upgradeError }}"
     when: update_package[0] is defined and update_package[0].upgradeError is defined
@@ -46,14 +46,14 @@
       verbosity: 0
     when: validation_details is defined
 
-  - name: get Update Package
+  - name: get Update Package State After Precheck
     include_role: 
       name: get_ppdm_update_package
     vars:
       filter: 'category eq "ACTIVE"' 
     when: update_package[0] is defined and update_package[0].upgradeError is defined
      
-  - name: display Failure
+  - name: display Failure with exit
     debug:
       msg: "{{ update_package[0].upgradeError }}"
     when: update_package[0] is defined and update_package[0].upgradeError is defined
