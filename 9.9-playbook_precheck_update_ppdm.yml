@@ -28,12 +28,14 @@
     vars:
       filter: 'category eq "ACTIVE"' 
 
-  - name: delete_ppdm_upgrade
+  - name: display Failure
+    debug:
+      msg: "{{ update_package[0].upgradeError }}"
     when: update_package[0] is defined and update_package[0].upgradeError is defined
-    include_role: 
-      name: delete_ppdm_update_package
-    vars:
-      id: "{{ update_package[0].id }}"
+#    include_role: 
+#      name: delete_ppdm_update_package
+#    vars:
+#      id: "{{ update_package[0].id }}"
   - name: precheck_ppdm_upgrade
     when: update_package[0] is defined and update_package[0].upgradeError is not defined
     include_role: 
