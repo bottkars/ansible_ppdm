@@ -10,9 +10,9 @@
   register: result  
   when: not ansible_check_mode 
   retries: 1000
-  delay: 10
-#   until: ( result.json is defined and result.json[0].percentageCompleted >= "90" )  or ( result.json is defined and result.json[0].upgradeStatus == "FAILED" ) or ( result.json is defined and result.json[0].upgradeStatus == "COMPLETED" ) 
+  delay: 10   
+  until: ( result.json is defined and result.json[0].percentageCompleted >= "90" )  or ( result.json is defined and result.json[0].upgradeStatus == "FAILED" ) or ( result.json is defined and result.json[0].upgradeStatus == "COMPLETED" ) 
 - debug: 
-    msg: "{{ result }}"
+    msg: "{{ result.json }}"
     verbosity: 0
-#  when: result.json is defined  
+  when: result.json is defined  
