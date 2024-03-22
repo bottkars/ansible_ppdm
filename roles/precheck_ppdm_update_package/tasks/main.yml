@@ -36,7 +36,7 @@
   until: result.json.validationDetails is defined and result.json.state != "PROCESSING" 
 - set_fact:
     validation_details: "{{ result.json.validationDetails }}" 
-  when:  validation_details is defined    
+  when:  result.json.validationDetails is defined    
 - debug:
     msg: "{{ validation_details }}"
     verbosity: 1    
