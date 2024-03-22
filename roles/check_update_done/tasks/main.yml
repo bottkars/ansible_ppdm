@@ -1,6 +1,9 @@
 - name: Wait for Appliance Update Done, this may take a few Minutes
   uri:
     method: GET
+    body_format: json
+    headers:
+      accept: application/json
     url: "{{ ppdm_baseurl }}:14443/upgrade/status"
     status_code: 200
     validate_certs: false
