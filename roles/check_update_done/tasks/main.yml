@@ -12,4 +12,4 @@
 - debug: 
     msg: "{{ result.json }}"
     verbosity: 0
-  when: result.json is defined  
+#  when: result.json is defined  
