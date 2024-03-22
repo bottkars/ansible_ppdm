@@ -5,3 +5,8 @@
       -H "content-type: multipart/form-data"  \
       -H "authorization: Bearer {{ access_token }}" \
       --form file=@{{ upload_file }}'
+- set_fact:
+    upload_result: "{{ result.stdout }}"
+- debug:
+    msg: "{{ upload_result }}"
+    verbosity: 0
