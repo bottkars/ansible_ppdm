@@ -6,7 +6,7 @@
       -H "authorization: Bearer {{ access_token }}" \
       --form file=@{{ upload_file }}'
 - set_fact:
-    upload_result: "{{ result.stdout }}"
+    upload_result: "{{ result }}"
 - debug:
     msg: "{{ upload_result }}"
     verbosity: 0
