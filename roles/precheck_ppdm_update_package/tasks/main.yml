@@ -19,7 +19,7 @@
 - debug:
     msg: "{{ update_precheck }}"
     verbosity: 1
-- name: Wait  Upgrade Package State
+- name: Wait Upgrade Package State
   uri:
     method: GET
     url: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/upgrade-packages/{{ id }}"
@@ -30,10 +30,10 @@
     status_code: 200,202,403
     validate_certs: false
   register: result 
-  retries: 60 
+  retries: 230 
   delay:  20
   when: not ansible_check_mode 
-  until: result.json.validationDetails is defined and result.json.state == "AVAILABLE"
+  until: result.json.validationDetails is defined and ( result.json.state == "AVAILABLE" or result.json.state == "PRECHECK_FAILED" )
 - set_fact:
     validation_details: "{{ result.json.validationDetails }}" 
   when:  validation_details is defined    
