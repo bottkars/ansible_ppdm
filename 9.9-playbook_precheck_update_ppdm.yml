@@ -42,5 +42,6 @@
       id: "{{ update_package[0].id }}"
   - debug:
       msg: "{{ validation_details }}"
-      verbosity: 0      
+      verbosity: 0
+    when: validation_details is defined        
      
