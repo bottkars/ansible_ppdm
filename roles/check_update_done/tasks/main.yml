@@ -10,6 +10,6 @@
   delay: 10
 #   until: ( result.json is defined and result.json[0].percentageCompleted >= "90" )  or ( result.json is defined and result.json[0].upgradeStatus == "FAILED" ) or ( result.json is defined and result.json[0].upgradeStatus == "COMPLETED" ) 
 - debug: 
-    msg: "{{ result.json }}"
+    msg: "{{ result }}"
     verbosity: 0
 #  when: result.json is defined  
