@@ -35,3 +35,7 @@
       name: upload_update_curl
     vars: 
       upload_file: "{{ upgrade_file }}"        
+  - name: Upload Result
+    debug:
+      msg: "{{ upload_result }}"
+      verbosity: 0
