@@ -30,7 +30,7 @@
     status_code: 200,202,403
     validate_certs: false
   register: result 
-  retries: 20 
+  retries: 60 
   delay:  20
   when: not ansible_check_mode 
   until: result.json.validationDetails is defined and  result.json.state == "AVAILABLE"
