@@ -18,7 +18,7 @@
     update_precheck: "{{ result.json }}"
 - debug:
     msg: "{{ update_precheck }}"
-    verbosity: 0
+    verbosity: 1
 - name: Wait Upgrade Package State
   uri:
     method: GET
@@ -39,4 +39,4 @@
   when:  result.json.validationDetails is defined    
 - debug:
     msg: "{{ validation_details }}"
-    verbosity: 0    
+    verbosity: 1    
