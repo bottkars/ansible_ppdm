@@ -32,6 +32,7 @@
     debug:
       msg: "{{ update_package[0].upgradeError }}"
     when: update_package[0] is defined and update_package[0].upgradeError is defined
+    failed_when: update_package[0] is defined and update_package[0].upgradeError is defined
 #    include_role: 
 #      name: delete_ppdm_update_package
 #    vars:
