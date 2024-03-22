@@ -37,7 +37,7 @@
 #    vars:
 #      id: "{{ update_package[0].id }}"
   - name: precheck_ppdm_upgrade
-    when: update_package[0] is defined and update_package[0].upgradeError is not defined
+    when: update_package[0] is defined # and update_package[0].upgradeError is not defined
     include_role: 
       name: precheck_ppdm_update_package
     vars:
