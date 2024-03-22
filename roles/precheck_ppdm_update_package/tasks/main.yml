@@ -32,7 +32,7 @@
   register: result 
   retries: 60 
   delay:  20
-  when: not ansible_check_mode 
+#  when: not ansible_check_mode 
   until: result.json.validationDetails is defined and result.json.state != "PROCESSING" 
 - set_fact:
     validation_details: "{{ result.json.validationDetails }}" 
