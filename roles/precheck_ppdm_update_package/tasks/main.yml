@@ -30,10 +30,10 @@
     status_code: 200,202,403
     validate_certs: false
   register: result 
-  retries: 230 
+  retries: 60 
   delay:  20
   when: not ansible_check_mode 
-  until: result.json.validationDetails is defined and ( result.json.state == "AVAILABLE" or result.json.state == "PRECHECK_FAILED" )
+  until: result.json.validationDetails is defined and result.json.state != "PROCESSING" 
 - set_fact:
     validation_details: "{{ result.json.validationDetails }}" 
   when:  validation_details is defined    
