@@ -22,7 +22,7 @@
       msg: "{{ access_token }}"
       verbosity: 1
     name: do we have a token ?  
-  - name: get Update Package vbefor precheck
+  - name: get Update Package prior precheck
     include_role: 
       name: get_ppdm_update_package
     vars:
