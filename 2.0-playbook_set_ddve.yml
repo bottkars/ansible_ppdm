@@ -79,9 +79,9 @@
       retries: 20
       delay: 60
       data:
-        name: "{{ ddve_address }}"
+        name: "{{ ddve_fqdn }}"
         type: "EXTERNALDATADOMAIN"
-        address: "{{ ddve_address }}"
+        address: "{{ ddve_fqdn }}"
         port: 3009
         credentials: 
             id: "{{ credentials.id }}"

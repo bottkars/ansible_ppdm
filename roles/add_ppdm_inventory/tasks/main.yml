@@ -1,4 +1,3 @@
-
 - name: Get PPDM inventory-sources 
   include_role: 
     name: get_ppdm_inventory-sources
