@@ -121,7 +121,7 @@
   - debug: 
       msg: "{{ protection_rule }}"
       verbosity: 0    
-    when: protection_rule[0].id is defined 
+    when: protection_rule is defined 
   - name: Create New Protection Rule
     vars:
       new_protection_rule:
