@@ -48,7 +48,7 @@
     include_role: 
       name: get_ppdm_storage-systems
     vars:
-      filter: type eq "DATA_DOMAIN_SYSTEM" # and address eq "{{ ddve_address }}" 
+      filter: type eq "DATA_DOMAIN_SYSTEM"  and address eq "{{ ddve_address }}" 
     when: protection_policy.id is not defined
 
   - name: Create New Protection Policy
