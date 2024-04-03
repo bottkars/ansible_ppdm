@@ -160,7 +160,8 @@
     when: protection_policy.id is defined and protection_rule.id is not defined
   - debug: 
       msg: "{{ protection_rule }}"
-      verbosity: 0    
+      verbosity: 0 
+    when: protection_rule is defined 
 #    when: protection_policy.id is defined or (protection_rule is not defined and protection_policy[0].id is defined )
   - name: Run Protection Rule
     vars:
