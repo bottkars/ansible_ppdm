@@ -64,6 +64,7 @@
       msg: "{{ inventorysources }}"
       verbosity: 0   
     when: inventorysources is defined  
+  - name: Define Storage System form Inventory
     set_fact:
       storagesystems: "{{ inventorysources }}"
 
