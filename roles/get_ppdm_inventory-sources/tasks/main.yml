@@ -2,13 +2,18 @@
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/inventory-sources/{{ id }}"
   when: id  | default('', true) | trim != ''
+- name: Define uri with inventory-sources ID for storage-systems
+  set_fact: 
+    uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/inventory-sources/{{ id }}/storage-systems"
+  when: (id  | default('', true) | trim != '') and storagesystems is defined 
 - name: Define uri without inventory-sources id
   set_fact: 
     uri: "{{ ppdm_baseurl }}:{{ ppdm_port }}{{ ppdm_api_ver }}/inventory-sources"
   when: id  | default('', false) | trim == ''
 - name: "Rewrite uri with filter: {{ filter }}"
   set_fact: 
-    uri: "{{ uri }}?filter={{ filter | string | urlencode }}"  
+    uri: "{{ uri }}?filter={{ filter | string | urlencode }}"
+  when: filter is defined    
 - name: Get PPDM inventory-sources with status {{ condition }}
   uri:
     method: GET
@@ -30,8 +35,11 @@
     inventorysources: "{{ result.json.content }}"
   when: result.json.content is defined
 - set_fact:
+    inventorysources: "{{ result.json.content }}"
+  when: id  | default('', true) | trim != '' and result.json.content is defined     
+- set_fact:
     inventorysources: "{{ result.json }}"
-  when: id  | default('', true) | trim != '' and result.json is defined     
+  when: id  | default('', true) | trim != '' and result.json.content is not defined and result.json is defined    
 - debug:
     msg: "{{ inventorysources }}"
     verbosity: 1      

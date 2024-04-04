@@ -44,12 +44,30 @@
       msg: "{{ protection_policy }}"
       verbosity: 0 
 
-  - name: Get DataDomain Storage Systems
+  - name: Get PPDM inventory-sources
     include_role: 
-      name: get_ppdm_storage-systems
+      name: get_ppdm_inventory-sources
     vars:
-      filter: type eq "DATA_DOMAIN_SYSTEM" and address eq "{{ ddve_address }}" 
+      filter: name eq "{{ ddve_fqdn }}"    
     when: protection_policy.id is not defined
+
+
+  - name: Get DataDomain Storage Systems via Inventory
+    include_role: 
+      name: get_ppdm_inventory-sources
+    vars:
+      id: "{{ inventorysources[0].id }}"
+      storagesystems: "true"
+    when: protection_policy.id is not defined      
+  - name: inventorysource Result
+    debug: 
+      msg: "{{ inventorysources }}"
+      verbosity: 0   
+    when: inventorysources is defined  
+    set_fact:
+      storagesystems: "{{ inventorysources }}"
+
+
 
   - name: Create New Protection Policy
     vars:
