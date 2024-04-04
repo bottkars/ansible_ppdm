@@ -11,7 +11,7 @@
   collections:
    - kubernetes.core     
   vars: 
-    vcenter_address: (lookup(en))
+
   tasks:  
   - name: Checking Required Variable ppdm_fqdn
     fail: 
@@ -127,7 +127,7 @@
     debug: 
       msg: "{{ inventorysources | json_query('[0].{name: name,id: id,type: type}') }}"
       verbosity: 0   
-    when: vcenter_address | default('', true) | trim != ''
+    when: inventorysources is defined
 
   - name: Setting vCenter Details
     set_fact:
@@ -135,7 +135,7 @@
         k8s:
           distributionType: VANILLA_ON_VSPHERE
           vCenterId: "{{ inventorysources[0].id }}"
-    when: vcenter_address | default('', true) | trim != ''
+    when: inventorysources is defined and vcenter_address is defined 
 
   - name: Ensure K8S Cluster {{ k8s_fqdn }} in Inventory with vCenter Details ( CSI Drivers as a Process )
     when: details is defined
