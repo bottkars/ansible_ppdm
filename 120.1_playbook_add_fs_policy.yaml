@@ -49,7 +49,7 @@
     include_role: 
       name: get_ppdm_storage-systems
     vars:
-      filter: type eq "DATA_DOMAIN_SYSTEM" and name eq "{{ ddve_fqdn }}" 
+      filter: type eq "DATA_DOMAIN_SYSTEM" and details.dataDomain.preferredInterfaces.ipAddress eq "{{ ddve_fqdn }}" 
     when: protection_policy.id is not defined
 
   - name: Create New Protection Policy
