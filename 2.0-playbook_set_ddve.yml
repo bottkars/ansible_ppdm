@@ -16,8 +16,8 @@
     when: (ppdm_new_password is not defined) or (ppdm_new_password|length == 0)  
   - name: Checking Required Variable ddve_fqdn
     fail: 
-      msg: "We do not have ddve fqdn set !"
-    when: (ddve_fqdn is not defined) or (ddve_fqdn|length <= 8)
+      msg: "We do not have ddve_fqdn set !"
+    when: (ddve_fqdn is not defined) or (ddve_fqdn|length <= 3)
   - name: Checking Required Variable ddve_password
     fail: 
       msg: "We do not have ddve_password  set !"
