@@ -17,8 +17,10 @@
   when: not ansible_check_mode
 
 - debug:
-    msg: "{{ result.json }}"
+    msg: "{{ result }}"
     verbosity: 0
+
 - name: return certificate
   set_fact:
     certificate: "{{ result.json }}"
+  when: result.json is defined  
