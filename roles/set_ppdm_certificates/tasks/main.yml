@@ -11,7 +11,7 @@
     headers:
       accept: application/json
       authorization: "Bearer {{ access_token }}"    
-    status_code: 200,201,-1
+    status_code: 200,201
     validate_certs: false
   register: result  
   when: not ansible_check_mode
